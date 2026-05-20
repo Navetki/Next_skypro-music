@@ -4,7 +4,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background: #1c1c1c; /* Сплошной темный фон как в макете */
+  background: #1c1c1c;
 }
 
 .barContent {
@@ -26,7 +26,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 36px; /* Отступы по бокам, чтобы контент не прилипал к краям экрана */
+  padding: 0 36px;
 }
 
 .barPlayer {
@@ -36,7 +36,6 @@
   justify-content: flex-start;
 }
 
-/* Кнопки управления (назад, play, вперед...) */
 .playerControls {
   display: flex;
   flex-direction: row;
@@ -68,7 +67,6 @@
   margin-right: 24px;
 }
 
-/* Размеры иконок */
 .playerBtnPrevSvg {
   width: 15px;
   height: 14px;
@@ -97,7 +95,6 @@
   stroke: #696969;
 }
 
-/* Блок трека (обложка, название, автор) */
 .playerTrackPlay {
   display: flex;
   flex-direction: row;
@@ -117,7 +114,7 @@
 .trackPlayImage {
   width: 51px;
   height: 51px;
-  background-color: #313131; /* Убедитесь, что тут стоит этот цвет, чтобы иконка выделилась */
+  background-color: #313131;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,10 +151,9 @@
   font-weight: 400;
   font-size: 13px;
   line-height: 24px;
-  color: #4e4e4e;
+  color: #ffffff;
 }
 
-/* Блок лайка и дизлайка */
 .trackPlayDislikeBlock {
   display: flex;
   flex-direction: row;
@@ -187,7 +183,6 @@
   stroke: #696969;
 }
 
-/* Блок громкости (прижат вправо) */
 .barVolumeBlock {
   width: auto;
   display: flex;

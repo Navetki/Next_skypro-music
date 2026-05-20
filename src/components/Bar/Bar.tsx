@@ -9,7 +9,6 @@ export default function Bar() {
         <div className={styles.barPlayerProgress}></div>
         <div className={styles.barPlayerBlock}>
           <div className={styles.barPlayer}>
-            {/* Кнопки управления */}
             <div className={styles.playerControls}>
               <div className={styles.playerBtnPrev}>
                 <svg className={styles.playerBtnPrevSvg}>
@@ -42,7 +41,6 @@ export default function Bar() {
               </div>
             </div>
 
-            {/* Трек в плеере */}
             <div className={styles.playerTrackPlay}>
               <div className={styles.trackPlayContain}>
                 <div className={styles.trackPlayImage}>
@@ -62,7 +60,6 @@ export default function Bar() {
                 </div>
               </div>
 
-              {/* Лайки / Дизлайки */}
               <div className={styles.trackPlayDislikeBlock}>
                 <div
                   className={classnames(
@@ -88,7 +85,6 @@ export default function Bar() {
             </div>
           </div>
 
-          {/* Громкость */}
           <div className={styles.barVolumeBlock}>
             <div className={styles.volumeContent}>
               <div className={styles.volumeImage}>
