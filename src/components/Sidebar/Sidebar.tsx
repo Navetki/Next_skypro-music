@@ -31,7 +31,7 @@ export default function Sidebar() {
             <Link className={styles.link} href="#">
               <Image
                 className={styles.img}
-                src="/img/playlist01.png"
+                src="/img/playlist02.png"
                 alt="day's playlist"
                 fill
                 sizes="250px"
@@ -42,7 +42,7 @@ export default function Sidebar() {
             <Link className={styles.link} href="#">
               <Image
                 className={styles.img}
-                src="/img/playlist01.png"
+                src="/img/playlist03.png"
                 alt="day's playlist"
                 fill
                 sizes="250px"

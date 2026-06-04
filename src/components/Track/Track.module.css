@@ -121,3 +121,32 @@
   text-align: right;
   color: #4e4e4e;
 }
+.activeTrackText {
+  color: #b674ff;
+}
+.playingDot {
+  width: 12px;
+  height: 12px;
+  background-color: #b674ff;
+  border-radius: 50%;
+  margin: auto;
+}
+
+.playingDotActive {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+}
