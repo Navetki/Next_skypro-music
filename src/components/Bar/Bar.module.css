@@ -266,3 +266,9 @@
   stroke: #ffffff;
   cursor: pointer;
 }
+
+.btnActive svg {
+  fill: #ffffff;
+  stroke: #ffffff;
+  opacity: 1;
+}
