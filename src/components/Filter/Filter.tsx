@@ -43,7 +43,7 @@ export default function Filter() {
 
       <div className={styles.filterWrapper}>
         <button
-          onClick={() => handleFilterClick('author')}
+          onClick={() => handleFilterClick('year')}
           className={classNames(styles.filter__button, {
             [styles.active]: activeFilter === 'year',
           })}

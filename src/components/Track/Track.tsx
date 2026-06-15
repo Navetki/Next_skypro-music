@@ -1,54 +1,68 @@
-import Link from 'next/link';
+'use client';
+
+import classnames from 'classnames';
 import styles from './Track.module.css';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { setCurrentTrack, setIsPlay } from '@/store/features/trackSlice';
+import { TrackType } from '@/SharedTypes/ShareTypes';
+import { formatTime } from '@/utils/helper';
 
 interface TrackProps {
-  title: string;
-  titleSpan?: string;
-  author: string;
-  album: string;
-  time: string;
+  track: TrackType;
 }
 
-export default function Track({
-  title,
-  titleSpan,
-  author,
-  album,
-  time,
-}: TrackProps) {
+export default function Track({ track }: TrackProps) {
+  const dispatch = useAppDispatch();
+
+  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+  const isPlay = useAppSelector((state) => state.tracks.isPlay);
+
+  const isCurrentTrack = currentTrack?.track_file === track.track_file;
+
+  const handleTrackClick = () => {
+    dispatch(setCurrentTrack(track));
+    dispatch(setIsPlay(true));
+  };
+
   return (
-    <div className={styles.playlistItem}>
+    <div className={styles.playlistItem} onClick={handleTrackClick}>
       <div className={styles.playlistTrack}>
         <div className={styles.trackTitle}>
           <div className={styles.trackTitleImage}>
-            <svg className={styles.trackTitleSvg}>
-              <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-            </svg>
+            {isCurrentTrack ? (
+              <div
+                className={classnames(
+                  styles.playingDot,
+                  isPlay && styles.playingDotActive,
+                )}
+              />
+            ) : (
+              <svg className={styles.trackTitleSvg}>
+                <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+              </svg>
+            )}
           </div>
-          <div className={styles.trackTitleText}>
-            <Link className={styles.trackTitleLink} href="#">
-              {title}{' '}
-              {titleSpan && (
-                <span className={styles.trackTitleSpan}>{titleSpan}</span>
-              )}
-            </Link>
+
+          <div
+            className={classnames(
+              styles.trackTitleText,
+              isCurrentTrack && styles.activeTrackText,
+            )}
+          >
+            <span className={styles.trackTitleLink}>{track.name}</span>
           </div>
         </div>
+
         <div className={styles.trackAuthor}>
-          <Link className={styles.trackAuthorLink} href="#">
-            {author}
-          </Link>
+          <span className={styles.trackAuthorLink}>{track.author}</span>
         </div>
         <div className={styles.trackAlbum}>
-          <Link className={styles.trackAlbumLink} href="#">
-            {album}
-          </Link>
+          <span className={styles.trackAlbumLink}>{track.album}</span>
         </div>
         <div className={styles.trackTime}>
-          <svg className={styles.trackTimeSvg}>
-            <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-          </svg>
-          <span className={styles.trackTimeText}>{time}</span>
+          <span className={styles.trackTimeText}>
+            {formatTime(track.duration_in_seconds)}
+          </span>
         </div>
       </div>
     </div>
