@@ -6,7 +6,7 @@ export default function Playlist() {
   return (
     <div className={styles.contentPlaylist}>
       {tracks.map((track) => (
-        <Track key={track.track_file} track={track} />
+        <Track key={track._id} track={track} playlist={tracks} />
       ))}
     </div>
   );
