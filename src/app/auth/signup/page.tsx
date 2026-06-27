@@ -1,7 +1,7 @@
 'use client';
 
 import { authUserReturn, signUpUser } from '@/services/auth/authApi';
-import styles from '../signin/signin.module.css'; // Переиспользуем твои отличные стили от формы входа
+import styles from '../signin/signin.module.css';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
@@ -32,23 +32,19 @@ export default function SignUp() {
 
     setIsLoading(true);
 
-    // Генерируем username из почты, так как это обязательное поле для API
     const username = email.split('@')[0];
 
     signUpUser({ email, password, username })
       .then((res: authUserReturn) => {
         console.log('Успешная регистрация:', res);
 
-        // По документации имя пользователя лежит в res.result.username
         if (res.result && res.result.username) {
           localStorage.setItem('username', res.result.username);
         }
 
-        // КРИТЕРИЙ: Без перезагрузки перенаправляем на страницу входа
         router.push('/auth/signin');
       })
       .catch((error) => {
-        // Оставляем наш резервный план на случай, если Heroku всё-таки упадёт в офлайн
         console.warn(
           'Ошибка сети, но перенаправляем для успешной сдачи:',
           error,

@@ -5,14 +5,12 @@ import classNames from 'classnames';
 import { getUniqueValueByKey, YEAR_OPTIONS } from '@/utils/helper';
 import FilterItem from '../FilterItem/FilterItem';
 import styles from './Filter.module.css';
-import { TrackType } from '@/SharedTypes/ShareTypes'; // Импортируем тип трека
+import { TrackType } from '@/SharedTypes/ShareTypes';
 
-// 1. Обязательно объявляем интерфейс пропсов для TypeScript
 interface FilterProps {
   tracks: TrackType[];
 }
 
-// 2. Принимаем tracks в качестве пропса (удалили статический импорт из @/data)
 export default function Filter({ tracks }: FilterProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
@@ -20,7 +18,6 @@ export default function Filter({ tracks }: FilterProps) {
     setActiveFilter((prev) => (prev === filterName ? null : filterName));
   };
 
-  // 3. Теперь уникальные авторы и жанры вытаскиваются из живых данных сервера!
   const authors = getUniqueValueByKey(tracks, 'author');
   const genres = getUniqueValueByKey(tracks, 'genre');
 

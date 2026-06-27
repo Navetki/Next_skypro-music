@@ -20,7 +20,6 @@ export default function Centerblock({
 }: CenterblockProps) {
   return (
     <div className={styles.mainCenterblock}>
-      {/* 1. Блок поиска */}
       <div className={styles.centerblockSearch}>
         <svg className={styles.searchSvg}>
           <use xlinkHref="/img/icon/sprite.svg#icon-search"></use>
@@ -33,15 +32,12 @@ export default function Centerblock({
         />
       </div>
 
-      {/* 2. Заголовок */}
       <h2 className={styles.centerblockH2}>{title}</h2>
 
-      {/* 3. Фильтры (Надпись "Искать по:" должна быть внутри или перед кнопками) */}
       <div className={styles.centerblockFilterContainer}>
         <Filter tracks={tracks} />
       </div>
 
-      {/* 4. Контент списка */}
       <div className={styles.centerblockContent}>
         <div className={styles.contentTitle}>
           <div className={styles.playlistCol01}>Трек</div>

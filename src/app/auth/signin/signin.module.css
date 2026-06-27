@@ -36,7 +36,7 @@
   width: 366px;
   height: 439px;
   min-height: 439px;
-  background-color: #ffffff; /* ИСПРАВЛЕНО: Буква 'a' на месте, цвет применится */
+  background-color: #ffffff;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -162,7 +162,6 @@
   margin-bottom: 30px;
 }
 
-/* КРИТИЧНО ДЛЯ МАКЕТА: Сбрасываем белый фон у родительской формы без !important */
 .containerEnter :global(form) {
   background-color: transparent;
   height: auto;

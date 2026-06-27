@@ -6,12 +6,11 @@ type authUserProps = {
   password: string;
 };
 
-// Исправлено строго по твоей документации с GitHub:
 export type authUserReturn = {
   message?: string;
   success?: boolean;
-  username?: string; // <-- ДОБАВИЛИ сюда на верхний уровень
-  email?: string; // <-- ДОБАВИЛИ сюда на верхний уровень
+  username?: string;
+  email?: string;
   result?: {
     email: string;
     username: string;
@@ -22,9 +21,7 @@ export type authUserReturn = {
   token?: string;
 };
 
-// 1. Функция авторизации (Вход)
 export const authUser = (data: authUserProps): Promise<authUserReturn> => {
-  // Принудительно проверяем слэши при склейке URL
   const url = API_BASE_URL.endsWith('/')
     ? `${API_BASE_URL}user/login/`
     : `${API_BASE_URL}/user/login/`;
@@ -37,7 +34,6 @@ export const authUser = (data: authUserProps): Promise<authUserReturn> => {
     .then((response) => response.data);
 };
 
-// 2. Функция регистрации (Регистрация)
 export const signUpUser = (
   data: authUserProps & { username: string },
 ): Promise<authUserReturn> => {

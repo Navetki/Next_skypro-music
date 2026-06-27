@@ -7,9 +7,8 @@ import styles from '../../page.module.css';
 
 import { getSelectionTracks } from '@/services/tracks/tracksApi';
 import { TrackType } from '@/SharedTypes/ShareTypes';
-import { data as mockTracks } from '@/data'; // Подстраховка для подборок
+import { data as mockTracks } from '@/data';
 
-// Импортируем компоненты структуры страницы
 import Nav from '@/components/Nav/Nav';
 import Centerblock from '@/components/Centerblock/Centerblock';
 import Sidebar from '@/components/Sidebar/Sidebar';
@@ -38,7 +37,7 @@ export default function CategoryPage() {
       .then((res) => {
         setTracks(res);
         setError('');
-        setIsLoading(false); // Выключаем часы при успехе в категории
+        setIsLoading(false);
       })
       .catch((err) => {
         console.error('ОШИБКА API КАТЕГОРИИ:', err);
@@ -59,10 +58,9 @@ export default function CategoryPage() {
           setError('Не удалось загрузить треки из этой подборки');
         }
 
-        // Подставляем резервный список, чтобы страница подборки не зависала на часах
         setTracks(mockTracks);
         setError('');
-        setIsLoading(false); // ПРИНУДИТЕЛЬНО выключаем часы при ошибке в категории
+        setIsLoading(false);
       });
   }, [categoryId]);
 

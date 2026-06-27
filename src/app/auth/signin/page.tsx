@@ -5,7 +5,6 @@ import styles from './signin.module.css';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
-import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 export default function Signin() {
@@ -54,11 +53,9 @@ export default function Signin() {
           error,
         );
 
-        // КРИТЕРИЙ ТЗ: Безопасное сохранение токена и имени в LocalStorage в случае сбоя сети
         localStorage.setItem('token', 'local_session_token_success');
         localStorage.setItem('username', email.split('@')[0]);
 
-        // КРИТЕРИЙ ТЗ: Бесшовный редирект на главную без перезагрузки страницы
         router.push('/music/main');
       })
       .finally(() => {
@@ -67,7 +64,7 @@ export default function Signin() {
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} suppressHydrationWarning>
       <div className={styles.containerEnter}>
         <div className={styles.modal__block}>
           <div className={styles.modal__form}>
@@ -78,6 +75,7 @@ export default function Signin() {
             </Link>
 
             <input
+              suppressHydrationWarning
               className={classNames(styles.modal__input, styles.login)}
               type="text"
               name="login"
@@ -85,7 +83,9 @@ export default function Signin() {
               value={email}
               onChange={onChangeEmail}
             />
+
             <input
+              suppressHydrationWarning
               className={styles.modal__input}
               type="password"
               name="password"

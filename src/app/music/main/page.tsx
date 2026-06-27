@@ -5,13 +5,18 @@ import { useEffect, useState } from 'react';
 import { getAllTracks } from '@/services/tracks/tracksApi';
 import { TrackType } from '@/SharedTypes/ShareTypes';
 import { AxiosError } from 'axios';
-import { data as mockTracks } from '@/data'; // Наш резервный список треков
+import { data as mockTracks } from '@/data';
+import dynamic from 'next/dynamic'; // Импортируем динамические компоненты Next.js
 
 // Импортируем компоненты структуры страницы
 import Nav from '@/components/Nav/Nav';
 import Centerblock from '@/components/Centerblock/Centerblock';
-import Sidebar from '@/components/Sidebar/Sidebar';
 import Bar from '@/components/Bar/Bar';
+
+// Динамический импорт Сайдбара с отключением серверного рендеринга (SSR: false)
+const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
+  ssr: false,
+});
 
 export default function Home() {
   const [tracks, setTracks] = useState<TrackType[]>([]);
@@ -23,7 +28,7 @@ export default function Home() {
       .then((res) => {
         setTracks(res);
         setError('');
-        setIsLoading(false); // Выключаем часы при успешном ответе
+        setIsLoading(false);
       })
       .catch((err) => {
         console.error('ПОЛНАЯ ОШИБКА API ТРЕКОВ:', err);
@@ -44,10 +49,7 @@ export default function Home() {
           setError('Не удалось загрузить треки');
         }
 
-        // Подставляем резервный список, чтобы интерфейс ожил
         setTracks(mockTracks);
-
-        // Очищаем ошибку и ПРИНУДИТЕЛЬНО убираем часы-загрузку с экрана
         setError('');
         setIsLoading(false);
       });
@@ -59,7 +61,6 @@ export default function Home() {
         <main className={styles.main}>
           <Nav />
 
-          {/* Передаем состояние загрузки, ошибку и треки в Centerblock */}
           <Centerblock tracks={tracks} error={error} isLoading={isLoading} />
 
           <Sidebar />

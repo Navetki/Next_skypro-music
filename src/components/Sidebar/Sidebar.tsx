@@ -1,26 +1,19 @@
-'use client'; // ОБЯЗАТЕЛЬНО: сообщает Next.js, что этот компонент работает в браузере
+'use client';
 
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Sidebar.module.css';
 
 export default function Sidebar() {
-  const [username, setUsername] = useState('Sergey.Ivanov');
+  // Прямое синхронное чтение из хранилища браузера (без хуков)
+  const username =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('username') || 'Sergey.Ivanov'
+      : 'Sergey.Ivanov';
 
-  useEffect(() => {
-    // Получаем реальное имя пользователя из localStorage, если оно там есть
-    const storedUsername = localStorage.getItem('username');
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
-  }, []);
-
-  // Функция очистки сессии при выходе из профиля
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
-    // Перенаправляем пользователя на форму входа
     window.location.href = '/auth/signin';
   };
 
@@ -28,8 +21,6 @@ export default function Sidebar() {
     <div className={styles.sidebar}>
       <div className={styles.personal}>
         <p className={styles.personalName}>{username}</p>
-
-        {/* Навешиваем клик на иконку выхода и добавляем указатель мыши при наведении */}
         <div
           className={styles.icon}
           onClick={handleLogout}
@@ -40,7 +31,6 @@ export default function Sidebar() {
           </svg>
         </div>
       </div>
-
       <div className={styles.block}>
         <div className={styles.list}>
           <div className={styles.item}>
