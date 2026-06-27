@@ -1,36 +1,66 @@
-import classnames from 'classnames';
+'use client';
+
+import { TrackType } from '@/SharedTypes/ShareTypes';
 import Playlist from '../Playlist/Playlist';
 import Filter from '../Filter/Filter';
-import Search from '../Search/Search';
 import styles from './Centerblock.module.css';
 
-export default function Centerblock() {
+interface CenterblockProps {
+  title?: string;
+  tracks: TrackType[];
+  error: string;
+  isLoading: boolean;
+}
+
+export default function Centerblock({
+  title = 'Треки',
+  tracks,
+  error,
+  isLoading,
+}: CenterblockProps) {
   return (
-    <div className={styles.centerblock}>
-      <Search title="Заголовок" />
-      <h2 className={styles.h2}>Треки</h2>
+    <div className={styles.mainCenterblock}>
+      {/* 1. Блок поиска */}
+      <div className={styles.centerblockSearch}>
+        <svg className={styles.searchSvg}>
+          <use xlinkHref="/img/icon/sprite.svg#icon-search"></use>
+        </svg>
+        <input
+          className={styles.searchText}
+          type="search"
+          placeholder="Поиск"
+          name="search"
+        />
+      </div>
 
-      <Filter />
+      {/* 2. Заголовок */}
+      <h2 className={styles.centerblockH2}>{title}</h2>
 
-      <div className={styles.content}>
+      {/* 3. Фильтры (Надпись "Искать по:" должна быть внутри или перед кнопками) */}
+      <div className={styles.centerblockFilterContainer}>
+        <Filter tracks={tracks} />
+      </div>
+
+      {/* 4. Контент списка */}
+      <div className={styles.centerblockContent}>
         <div className={styles.contentTitle}>
-          <div className={classnames(styles.playlistTitleCol, styles.col01)}>
-            Трек
-          </div>
-          <div className={classnames(styles.playlistTitleCol, styles.col02)}>
-            Исполнитель
-          </div>
-          <div className={classnames(styles.playlistTitleCol, styles.col03)}>
-            Альбом
-          </div>
-          <div className={classnames(styles.playlistTitleCol, styles.col04)}>
-            <svg className={styles.playlistTitleSvg}>
+          <div className={styles.playlistCol01}>Трек</div>
+          <div className={styles.playlistCol02}>ИСПОЛНИТЕЛЬ</div>
+          <div className={styles.playlistCol03}>АЛЬБОМ</div>
+          <div className={styles.playlistCol04}>
+            <svg className={styles.watchSvg}>
               <use xlinkHref="/img/icon/sprite.svg#icon-watch"></use>
             </svg>
           </div>
         </div>
 
-        <Playlist />
+        {error && <div className={styles.errorText}>{error}</div>}
+
+        {isLoading && tracks.length === 0 && !error && (
+          <div className={styles.loadingText}>Загрузка треков...</div>
+        )}
+
+        {tracks.length > 0 && <Playlist initialTracks={tracks} />}
       </div>
     </div>
   );

@@ -4,6 +4,11 @@ export function getUniqueValueByKey(
   arr: TrackType[],
   key: keyof TrackType,
 ): string[] {
+  // БРОНЕБОЙНАЯ ЗАЩИТА: Если пришла ошибка сети или не массив, возвращаем пустой список, не роняя сайт
+  if (!arr || !Array.isArray(arr)) {
+    return [];
+  }
+
   const uniqueValues = new Set<string>();
 
   arr.forEach((item) => {

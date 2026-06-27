@@ -73,8 +73,6 @@ export default function Bar() {
   const onLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
-      audioRef.current.play().catch(() => {});
-      dispatch(setIsPlay(true));
       setIsLoadedTrack(true);
     }
   };

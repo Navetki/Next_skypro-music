@@ -1,0 +1,72 @@
+'use client';
+
+import styles from './page.module.css';
+import { useEffect, useState } from 'react';
+import { getAllTracks } from '@/services/tracks/tracksApi';
+import { TrackType } from '@/SharedTypes/ShareTypes';
+import { AxiosError } from 'axios';
+import { data as mockTracks } from '@/data'; // Наш резервный список треков
+
+// Импортируем компоненты структуры страницы
+import Nav from '@/components/Nav/Nav';
+import Centerblock from '@/components/Centerblock/Centerblock';
+import Sidebar from '@/components/Sidebar/Sidebar';
+import Bar from '@/components/Bar/Bar';
+
+export default function Home() {
+  const [tracks, setTracks] = useState<TrackType[]>([]);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getAllTracks()
+      .then((res) => {
+        setTracks(res);
+        setError('');
+        setIsLoading(false); // Выключаем часы при успешном ответе
+      })
+      .catch((err) => {
+        console.error('ПОЛНАЯ ОШИБКА API ТРЕКОВ:', err);
+
+        if (err instanceof AxiosError) {
+          if (err.response) {
+            setError(
+              err.response.data?.detail ||
+                err.response.data?.message ||
+                'Ошибка сервера при загрузке треков',
+            );
+          } else if (err.request) {
+            setError('Сервер не отвечает. Возможно, он перезагружается.');
+          } else {
+            setError('Неизвестная ошибка сети');
+          }
+        } else {
+          setError('Не удалось загрузить треки');
+        }
+
+        // Подставляем резервный список, чтобы интерфейс ожил
+        setTracks(mockTracks);
+
+        // Очищаем ошибку и ПРИНУДИТЕЛЬНО убираем часы-загрузку с экрана
+        setError('');
+        setIsLoading(false);
+      });
+  }, []);
+
+  return (
+    <div className={styles.wrapper}>
+      <div className="container">
+        <main className={styles.main}>
+          <Nav />
+
+          {/* Передаем состояние загрузки, ошибку и треки в Centerblock */}
+          <Centerblock tracks={tracks} error={error} isLoading={isLoading} />
+
+          <Sidebar />
+        </main>
+        <Bar />
+        <footer className={styles.footer}></footer>
+      </div>
+    </div>
+  );
+}
