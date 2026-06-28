@@ -4,6 +4,10 @@ export function getUniqueValueByKey(
   arr: TrackType[],
   key: keyof TrackType,
 ): string[] {
+  if (!arr || !Array.isArray(arr)) {
+    return [];
+  }
+
   const uniqueValues = new Set<string>();
 
   arr.forEach((item) => {

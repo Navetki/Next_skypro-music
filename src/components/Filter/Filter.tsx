@@ -2,12 +2,16 @@
 
 import { useState } from 'react';
 import classNames from 'classnames';
-import { data as tracks } from '@/data';
 import { getUniqueValueByKey, YEAR_OPTIONS } from '@/utils/helper';
 import FilterItem from '../FilterItem/FilterItem';
 import styles from './Filter.module.css';
+import { TrackType } from '@/SharedTypes/ShareTypes';
 
-export default function Filter() {
+interface FilterProps {
+  tracks: TrackType[];
+}
+
+export default function Filter({ tracks }: FilterProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const handleFilterClick = (filterName: string) => {
