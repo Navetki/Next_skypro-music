@@ -67,9 +67,68 @@
   margin-right: 15px;
 }
 
+.centerblockContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.contentTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+  padding-left: 5px;
+}
+
+.playlistCol01 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 2px;
+  color: #696969;
+  text-transform: uppercase;
+  width: 447px;
+}
+
+.playlistCol02 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 2px;
+  color: #696969;
+  text-transform: uppercase;
+  width: 321px;
+}
+
+.playlistCol03 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 2px;
+  color: #696969;
+  text-transform: uppercase;
+  width: 245px;
+}
+
+.playlistCol04 {
+  width: 60px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .watchSvg {
   width: 12px;
   height: 12px;
   fill: transparent;
   stroke: #b1b1b1;
+}
+
+.contentPlaylist {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
