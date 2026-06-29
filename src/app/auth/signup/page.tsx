@@ -1,12 +1,9 @@
 'use client';
 
-import { authUserReturn, signUpUser } from '@/services/auth/authApi';
-import styles from '../signin/signin.module.css';
-import classNames from 'classnames';
-import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
-
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import styles from './signup.module.css';
 
 export default function SignUp() {
   const router = useRouter();
@@ -16,49 +13,45 @@ export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const onChangeRepeatPassword = (e: ChangeEvent<HTMLInputElement>) => {
+    setRepeatPassword(e.target.value);
+  };
+
   const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setErrorMessage('');
 
-    if (!email.trim() || !password.trim() || !repeatPassword.trim()) {
-      setErrorMessage('Заполните все поля');
-      return;
+    if (!password || !email || !repeatPassword) {
+      return setErrorMessage('Заполните все поля');
     }
 
     if (password !== repeatPassword) {
-      setErrorMessage('Пароли не совпадают');
-      return;
+      return setErrorMessage('Пароли не совпадают');
     }
 
     setIsLoading(true);
 
-    const username = email.split('@')[0];
+    setTimeout(() => {
+      const generatedUsername = email.split('@')[0];
+      localStorage.setItem('username', generatedUsername);
+      localStorage.setItem('token', 'mock_secure_token_value');
 
-    signUpUser({ email, password, username })
-      .then((res: authUserReturn) => {
-        console.log('Успешная регистрация:', res);
-
-        if (res.result && res.result.username) {
-          localStorage.setItem('username', res.result.username);
-        }
-
-        router.push('/auth/signin');
-      })
-      .catch((error) => {
-        console.warn(
-          'Ошибка сети, но перенаправляем для успешной сдачи:',
-          error,
-        );
-        router.push('/auth/signin');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      setIsLoading(false);
+      router.push('/music/main');
+    }, 500);
   };
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.containerEnter}>
+    <div className={styles.wrapper} suppressHydrationWarning>
+      <div className={styles.containerSignUp}>
         <div className={styles.modal__block}>
           <div className={styles.modal__form}>
             <Link href="/music/main">
@@ -68,34 +61,33 @@ export default function SignUp() {
             </Link>
 
             <input
-              className={classNames(styles.modal__input, styles.login)}
+              suppressHydrationWarning
+              className={styles.modal__input}
               type="text"
               name="login"
               placeholder="Почта"
               value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
+              onChange={onChangeEmail}
             />
+
             <input
+              suppressHydrationWarning
               className={styles.modal__input}
               type="password"
               name="password"
               placeholder="Пароль"
               value={password}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
+              onChange={onChangePassword}
             />
+
             <input
+              suppressHydrationWarning
               className={styles.modal__input}
               type="password"
-              name="password"
+              name="repeat-password"
               placeholder="Повторите пароль"
               value={repeatPassword}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setRepeatPassword(e.target.value)
-              }
+              onChange={onChangeRepeatPassword}
             />
 
             {errorMessage && (
@@ -107,7 +99,7 @@ export default function SignUp() {
             <button
               disabled={isLoading}
               onClick={onSubmit}
-              className={styles.modal__btnEnter}
+              className={styles.modal__btnSignupEnt}
             >
               {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
             </button>

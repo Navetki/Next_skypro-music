@@ -1,13 +1,12 @@
 'use client';
 
-import { authUser, authUserReturn } from '@/services/auth/authApi';
 import styles from './signin.module.css';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function Signin() {
+export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,46 +20,25 @@ export default function Signin() {
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
+
   const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setErrorMessage('');
 
-    if (!email.trim() || !password.trim()) {
-      setErrorMessage('Заполните все поля');
-      return;
+    if (!password || !email) {
+      return setErrorMessage('Заполните все поля');
     }
 
     setIsLoading(true);
 
-    authUser({ email, password })
-      .then((res: authUserReturn) => {
-        console.log('Успешный вход от сервера:', res);
+    setTimeout(() => {
+      const userLogin = email.split('@')[0];
+      localStorage.setItem('token', 'mock_secure_token_value');
+      localStorage.setItem('username', userLogin);
 
-        const userData = res.result || res;
-        const token = res.access || res.token || 'local_session_token_success';
-
-        localStorage.setItem('token', token);
-        localStorage.setItem(
-          'username',
-          userData.username || userData.email || 'Пользователь',
-        );
-
-        router.push('/music/main');
-      })
-      .catch((error) => {
-        console.warn(
-          'Сервер Heroku недоступен или выдал ошибку, включаем резервный вход:',
-          error,
-        );
-
-        localStorage.setItem('token', 'local_session_token_success');
-        localStorage.setItem('username', email.split('@')[0]);
-
-        router.push('/music/main');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      setIsLoading(false);
+      router.push('/music/main');
+    }, 500);
   };
 
   return (
@@ -83,7 +61,6 @@ export default function Signin() {
               value={email}
               onChange={onChangeEmail}
             />
-
             <input
               suppressHydrationWarning
               className={styles.modal__input}
@@ -95,7 +72,15 @@ export default function Signin() {
             />
 
             {errorMessage && (
-              <div className={styles.errorContainer}>
+              <div
+                className={styles.errorContainer}
+                style={{
+                  color: 'red',
+                  marginTop: '10px',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                }}
+              >
                 <span>{errorMessage}</span>
               </div>
             )}
