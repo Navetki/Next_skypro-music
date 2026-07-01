@@ -6,14 +6,12 @@ import { getAllTracks } from '@/services/tracks/tracksApi';
 import { TrackType } from '@/SharedTypes/ShareTypes';
 import { AxiosError } from 'axios';
 import { data as mockTracks } from '@/data';
-import dynamic from 'next/dynamic'; // Импортируем динамические компоненты Next.js
+import dynamic from 'next/dynamic';
 
-// Импортируем компоненты структуры страницы
 import Nav from '@/components/Nav/Nav';
 import Centerblock from '@/components/Centerblock/Centerblock';
 import Bar from '@/components/Bar/Bar';
 
-// Динамический импорт Сайдбара с отключением серверного рендеринга (SSR: false)
 const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
   ssr: false,
 });
@@ -31,7 +29,7 @@ export default function Home() {
         setIsLoading(false);
       })
       .catch((err) => {
-        console.error('ПОЛНАЯ ОШИБКА API ТРЕКОВ:', err);
+        console.error('ПОЛНАЯ ОШИБКА треков:', err);
 
         if (err instanceof AxiosError) {
           if (err.response) {
