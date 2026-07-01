@@ -5,7 +5,6 @@ import Link from 'next/link';
 import styles from './Sidebar.module.css';
 
 export default function Sidebar() {
-  // Прямое синхронное чтение из хранилища браузера (без хуков)
   const username =
     typeof window !== 'undefined'
       ? localStorage.getItem('username') || 'Sergey.Ivanov'
