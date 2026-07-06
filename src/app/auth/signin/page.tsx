@@ -6,6 +6,8 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import Image from 'next/image';
 
 export default function Signin() {
   const router = useRouter();
@@ -21,6 +23,7 @@ export default function Signin() {
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
+
   const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setErrorMessage('');
@@ -48,15 +51,18 @@ export default function Signin() {
         router.push('/music/main');
       })
       .catch((error) => {
-        console.warn(
-          'Сервер Heroku недоступен или выдал ошибку, включаем резервный вход:',
-          error,
-        );
+        console.error(error);
 
-        localStorage.setItem('token', 'local_session_token_success');
-        localStorage.setItem('username', email.split('@')[0]);
-
-        router.push('/music/main');
+        if (error instanceof AxiosError && error.response) {
+          const serverError = error.response.data;
+          const msg =
+            serverError?.detail ||
+            serverError?.message ||
+            JSON.stringify(serverError);
+          setErrorMessage(msg || 'Неверная почта или пароль');
+        } else {
+          setErrorMessage('Ошибка сети. Не удалось связаться с сервером.');
+        }
       })
       .finally(() => {
         setIsLoading(false);
@@ -70,7 +76,12 @@ export default function Signin() {
           <div className={styles.modal__form}>
             <Link href="/music/main">
               <div className={styles.modal__logo}>
-                <img src="/img/logo_modal.png" alt="logo" />
+                <Image
+                  src="/img/logo_modal.png"
+                  alt="logo"
+                  width={250}
+                  height={40}
+                />
               </div>
             </Link>
 
@@ -95,7 +106,15 @@ export default function Signin() {
             />
 
             {errorMessage && (
-              <div className={styles.errorContainer}>
+              <div
+                className={styles.errorContainer}
+                style={{
+                  color: '#ff4d4d',
+                  padding: '10px 0',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
                 <span>{errorMessage}</span>
               </div>
             )}

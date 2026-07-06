@@ -5,8 +5,9 @@ import styles from '../signin/signin.module.css';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
-
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import Image from 'next/image';
 
 export default function SignUp() {
   const router = useRouter();
@@ -45,11 +46,18 @@ export default function SignUp() {
         router.push('/auth/signin');
       })
       .catch((error) => {
-        console.warn(
-          'Ошибка сети, но перенаправляем для успешной сдачи:',
-          error,
-        );
-        router.push('/auth/signin');
+        console.error(error);
+
+        if (error instanceof AxiosError && error.response) {
+          const serverError = error.response.data;
+          const msg =
+            serverError?.detail ||
+            serverError?.message ||
+            JSON.stringify(serverError);
+          setErrorMessage(msg || 'Ошибка регистрации. Проверьте данные.');
+        } else {
+          setErrorMessage('Ошибка сети. Не удалось связаться с сервером.');
+        }
       })
       .finally(() => {
         setIsLoading(false);
@@ -63,7 +71,13 @@ export default function SignUp() {
           <div className={styles.modal__form}>
             <Link href="/music/main">
               <div className={styles.modal__logo}>
-                <img src="/img/logo_modal.png" alt="logo" />
+                <Image
+                  src="/img/logo_modal.png"
+                  alt="logo"
+                  width={140}
+                  height={21}
+                  priority
+                />
               </div>
             </Link>
 
@@ -99,7 +113,15 @@ export default function SignUp() {
             />
 
             {errorMessage && (
-              <div className={styles.errorContainer}>
+              <div
+                className={styles.errorContainer}
+                style={{
+                  color: '#ff4d4d',
+                  padding: '10px 0',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
                 <span>{errorMessage}</span>
               </div>
             )}
