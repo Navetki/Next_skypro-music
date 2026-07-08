@@ -29,23 +29,16 @@ export const getAllTracks = (): Promise<TrackType[]> => {
 };
 export const getSelectionTracks = (
   id: string | number,
-): Promise<TrackType[]> => {
+): Promise<(string | number)[]> => {
   return api.get(`catalog/selection/${id}/`).then((response) => {
     console.log('ПОДБОРКА ОТ СЕРВЕРА:', response.data);
-
-    if (response.data && response.data.data) {
-      if (Array.isArray(response.data.data.items)) {
-        return response.data.data.items;
-      }
-      if (Array.isArray(response.data.data)) {
-        return response.data.data;
-      }
+    if (
+      response.data &&
+      response.data.data &&
+      Array.isArray(response.data.data.items)
+    ) {
+      return response.data.data.items;
     }
-
-    return (
-      response.data?.items ||
-      response.data?.result ||
-      (Array.isArray(response.data) ? response.data : [])
-    );
+    return response.data?.items || response.data?.result || [];
   });
 };

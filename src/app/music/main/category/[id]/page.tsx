@@ -19,9 +19,9 @@ const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
 });
 
 const SELECTION_NAMES: Record<string, string> = {
-  '1': 'Плейлист дня',
-  '2': '100 танцевальных хитов',
-  '3': 'Инди-заряд',
+  '2': 'Плейлист дня',
+  '3': '100 танцевальных хитов',
+  '4': 'Инди-заряд',
 };
 
 interface CustomTrackType extends TrackType {
@@ -32,53 +32,58 @@ export default function CategoryPage() {
   const params = useParams<{ id: string }>();
   const categoryId = params?.id;
 
-  const allTracks =
-    useAppSelector(
-      (state) =>
-        ((state.tracks as Record<string, unknown>).playlist as TrackType[]) ||
-        [],
-    ) || [];
+  const reduxPlaylist = useAppSelector(
+    (state) =>
+      ((state.tracks as Record<string, unknown>).playlist as TrackType[]) || [],
+  );
 
-  const [selectionIds, setSelectionIds] = useState<
-    (string | number | TrackType)[] | null
-  >(null);
+  const [selectionTracks, setSelectionTracks] = useState<TrackType[] | null>(
+    null,
+  );
   const [error, setError] = useState('');
 
   const selectionTitle = categoryId ? SELECTION_NAMES[categoryId] : 'Подборка';
-  const isLoading = selectionIds === null;
+  const isLoading = selectionTracks === null;
 
   useEffect(() => {
     if (!categoryId) return;
 
     getSelectionTracks(categoryId)
-      .then((res) => {
-        if (!res || res.length === 0) {
-          setSelectionIds(mockTracks as (string | number | TrackType)[]);
+      .then((res: unknown) => {
+        const rawArray = Array.isArray(res) ? res : [];
+
+        if (rawArray.length === 0) {
+          setSelectionTracks(mockTracks as TrackType[]);
         } else {
-          setSelectionIds(res);
+          const firstItem = rawArray[0];
+          if (typeof firstItem === 'number' || typeof firstItem === 'string') {
+            const ids = rawArray as (string | number)[];
+            const matched = ids
+              .map((targetId) => {
+                return reduxPlaylist.find((t: TrackType) => {
+                  const extTrack = t as CustomTrackType;
+                  return extTrack._id === targetId || extTrack.id === targetId;
+                });
+              })
+              .filter(
+                (t: TrackType | undefined): t is TrackType => t !== undefined,
+              );
+
+            setSelectionTracks(
+              matched.length > 0 ? matched : (mockTracks as TrackType[]),
+            );
+          } else {
+            setSelectionTracks(rawArray as TrackType[]);
+          }
         }
         setError('');
       })
       .catch((err) => {
         console.error(err);
         setError('Не удалось загрузить треки из этой подборки');
-        setSelectionIds(mockTracks as (string | number | TrackType)[]);
+        setSelectionTracks(mockTracks as TrackType[]);
       });
   }, [categoryId]);
-
-  const filteredTracks = (selectionIds || [])
-    .map((item) => {
-      if (item && typeof item === 'object' && ('_id' in item || 'id' in item)) {
-        return item as TrackType;
-      }
-
-      const targetId = item as string | number;
-      return allTracks.find((t: TrackType) => {
-        const extTrack = t as CustomTrackType;
-        return extTrack._id === targetId || extTrack.id === targetId;
-      });
-    })
-    .filter((t: TrackType | undefined): t is TrackType => t !== undefined);
 
   return (
     <div className={styles.wrapper}>
@@ -87,7 +92,7 @@ export default function CategoryPage() {
           <Nav />
           <Centerblock
             title={selectionTitle}
-            tracks={filteredTracks}
+            tracks={selectionTracks || []}
             error={error || null}
             isLoading={isLoading}
           />
