@@ -16,68 +16,51 @@ const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
   ssr: false,
 });
 
-interface ServerResponse {
-  success?: boolean;
-  items?: TrackType[];
-  result?: TrackType[];
-  data?: TrackType[] | { items?: TrackType[]; result?: TrackType[] };
+interface PageState {
+  tracks: TrackType[];
+  error: string;
+  isLoading: boolean;
 }
 
 export default function Home() {
-  const [tracks, setTracks] = useState<TrackType[]>([]);
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [pageState, setPageState] = useState<PageState>({
+    tracks: [],
+    error: '',
+    isLoading: true,
+  });
 
   useEffect(() => {
-    setIsLoading(true);
-    setError('');
-
     getAllTracks()
       .then((res) => {
-        const rawData = res as unknown as ServerResponse;
-
-        let serverTracks: TrackType[] = [];
         if (Array.isArray(res)) {
-          serverTracks = res;
-        } else if (rawData?.items && Array.isArray(rawData.items)) {
-          serverTracks = rawData.items;
-        } else if (rawData?.result && Array.isArray(rawData.result)) {
-          serverTracks = rawData.result;
-        } else if (rawData?.data) {
-          if (Array.isArray(rawData.data)) {
-            serverTracks = rawData.data;
-          } else if (rawData.data.items && Array.isArray(rawData.data.items)) {
-            serverTracks = rawData.data.items;
-          } else if (
-            rawData.data.result &&
-            Array.isArray(rawData.data.result)
-          ) {
-            serverTracks = rawData.data.result;
-          }
-        }
-
-        if (serverTracks.length === 0) {
-          setTracks(mockTracks);
+          setPageState({
+            tracks: res,
+            error: '',
+            isLoading: false,
+          });
         } else {
-          setTracks(serverTracks);
+          setPageState({
+            tracks: mockTracks,
+            error: '',
+            isLoading: false,
+          });
         }
-        setIsLoading(false);
       })
       .catch((err) => {
         console.error(err);
+        let errMsg = 'Не удалось загрузить треки';
         if (err instanceof AxiosError && err.response) {
-          setError(
+          errMsg =
             err.response.data?.detail ||
-              err.response.data?.message ||
-              'Ошибка сервера при загрузке треков',
-          );
-        } else if (err instanceof AxiosError && err.request) {
-          setError('Сервер не отвечает. Включаем резервные треки.');
-        } else {
-          setError('Не удалось загрузить треки');
+            err.response.data?.message ||
+            'Ошибка сервера при загрузке треков';
         }
-        setTracks(mockTracks);
-        setIsLoading(false);
+
+        setPageState({
+          tracks: mockTracks,
+          error: errMsg,
+          isLoading: false,
+        });
       });
   }, []);
 
@@ -87,9 +70,9 @@ export default function Home() {
         <main className={styles.main}>
           <Nav />
           <Centerblock
-            tracks={tracks}
-            error={error || null}
-            isLoading={isLoading}
+            tracks={pageState.tracks}
+            error={pageState.error || null}
+            isLoading={pageState.isLoading}
           />
           <Sidebar />
         </main>
