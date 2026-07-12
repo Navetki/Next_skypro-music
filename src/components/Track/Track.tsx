@@ -11,6 +11,14 @@ import {
 import { TrackType } from '@/SharedTypes/ShareTypes';
 import { formatTime } from '@/utils/helper';
 
+type ApiTrackType = TrackType & {
+  id?: number | string;
+  title?: string;
+  artist?: string;
+  duration?: number;
+  fileUrl?: string;
+};
+
 interface TrackProps {
   track: TrackType;
   playlist: TrackType[];
@@ -19,18 +27,31 @@ interface TrackProps {
 export default function Track({ track, playlist }: TrackProps) {
   const dispatch = useAppDispatch();
 
-  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+  const currentTrack = useAppSelector(
+    (state) => state.tracks.currentTrack,
+  ) as ApiTrackType | null;
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
 
-  const isCurrentTrack = currentTrack?.track_file === track.track_file;
+  const apiTrack = track as ApiTrackType;
+  console.log('ДАННЫЕ ОДНОГО ТРЕКА В КОМПОНЕНТЕ:', apiTrack);
+
+  const trackUrl = apiTrack.track_file || apiTrack.fileUrl || '';
+  const currentTrackUrl =
+    currentTrack?.track_file || currentTrack?.fileUrl || '';
+  const isCurrentTrack =
+    trackUrl !== '' && currentTrackUrl !== '' && currentTrackUrl === trackUrl;
 
   const handleTrackClick = () => {
     dispatch(setCurrentPlaylist(playlist));
-
     dispatch(setCurrentTrack(track));
-
     dispatch(setIsPlay(true));
   };
+
+  const trackName = apiTrack.name || apiTrack.title || 'Без названия';
+  const trackAuthor =
+    apiTrack.author || apiTrack.artist || 'Неизвестный исполнитель';
+  const trackAlbum = apiTrack.album || 'Вне альбома';
+  const duration = apiTrack.duration_in_seconds || apiTrack.duration || 0;
 
   return (
     <div className={styles.playlistItem} onClick={handleTrackClick}>
@@ -57,20 +78,18 @@ export default function Track({ track, playlist }: TrackProps) {
               isCurrentTrack && styles.activeTrackText,
             )}
           >
-            <span className={styles.trackTitleLink}>{track.name}</span>
+            <span className={styles.trackTitleLink}>{trackName}</span>
           </div>
         </div>
 
         <div className={styles.trackAuthor}>
-          <span className={styles.trackAuthorLink}>{track.author}</span>
+          <span className={styles.trackAuthorLink}>{trackAuthor}</span>
         </div>
         <div className={styles.trackAlbum}>
-          <span className={styles.trackAlbumLink}>{track.album}</span>
+          <span className={styles.trackAlbumLink}>{trackAlbum}</span>
         </div>
         <div className={styles.trackTime}>
-          <span className={styles.trackTimeText}>
-            {formatTime(track.duration_in_seconds)}
-          </span>
+          <span className={styles.trackTimeText}>{formatTime(duration)}</span>
         </div>
       </div>
     </div>

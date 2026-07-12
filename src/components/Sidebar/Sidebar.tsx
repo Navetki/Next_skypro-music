@@ -5,7 +5,6 @@ import Link from 'next/link';
 import styles from './Sidebar.module.css';
 
 export default function Sidebar() {
-  // Прямое синхронное чтение из хранилища браузера (без хуков)
   const username =
     typeof window !== 'undefined'
       ? localStorage.getItem('username') || 'Sergey.Ivanov'
@@ -34,7 +33,7 @@ export default function Sidebar() {
       <div className={styles.block}>
         <div className={styles.list}>
           <div className={styles.item}>
-            <Link className={styles.link} href="/music/main/category/1">
+            <Link className={styles.link} href="/music/main/category/2">
               <Image
                 className={styles.img}
                 src="/img/playlist01.png"
@@ -46,7 +45,7 @@ export default function Sidebar() {
             </Link>
           </div>
           <div className={styles.item}>
-            <Link className={styles.link} href="/music/main/category/2">
+            <Link className={styles.link} href="/music/main/category/3">
               <Image
                 className={styles.img}
                 src="/img/playlist02.png"
@@ -57,7 +56,7 @@ export default function Sidebar() {
             </Link>
           </div>
           <div className={styles.item}>
-            <Link className={styles.link} href="/music/main/category/3">
+            <Link className={styles.link} href="/music/main/category/4">
               <Image
                 className={styles.img}
                 src="/img/playlist03.png"
