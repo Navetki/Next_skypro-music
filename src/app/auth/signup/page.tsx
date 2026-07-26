@@ -1,6 +1,6 @@
 'use client';
 
-import { authUserReturn, signUpUser } from '@/services/auth/authApi';
+import { createUser } from '@/services/auth/authApi';
 import styles from '../signin/signin.module.css';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -17,7 +17,19 @@ export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const onChangeRepeatPassword = (e: ChangeEvent<HTMLInputElement>) => {
+    setRepeatPassword(e.target.value);
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -33,28 +45,20 @@ export default function SignUp() {
 
     setIsLoading(true);
 
-    const username = email.split('@')[0];
-
-    signUpUser({ email, password, username })
-      .then((res: authUserReturn) => {
+    createUser({ email, password, username: email.split('@')[0] })
+      .then((res: unknown) => {
         console.log('Успешная регистрация:', res);
-
-        if (res.result && res.result.username) {
-          localStorage.setItem('username', res.result.username);
-        }
-
         router.push('/auth/signin');
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         console.error(error);
-
         if (error instanceof AxiosError && error.response) {
           const serverError = error.response.data;
           const msg =
             serverError?.detail ||
             serverError?.message ||
             JSON.stringify(serverError);
-          setErrorMessage(msg || 'Ошибка регистрации. Проверьте данные.');
+          setErrorMessage(msg || 'Ошибка при регистрации');
         } else {
           setErrorMessage('Ошибка сети. Не удалось связаться с сервером.');
         }
@@ -65,7 +69,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} suppressHydrationWarning>
       <div className={styles.containerEnter}>
         <div className={styles.modal__block}>
           <div className={styles.modal__form}>
@@ -74,42 +78,41 @@ export default function SignUp() {
                 <Image
                   src="/img/logo_modal.png"
                   alt="logo"
-                  width={140}
-                  height={21}
+                  width={250}
+                  height={40}
                   priority
                 />
               </div>
             </Link>
 
             <input
+              suppressHydrationWarning
               className={classNames(styles.modal__input, styles.login)}
               type="text"
               name="login"
               placeholder="Почта"
               value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
+              onChange={onChangeEmail}
             />
+
             <input
+              suppressHydrationWarning
               className={styles.modal__input}
               type="password"
               name="password"
               placeholder="Пароль"
               value={password}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
+              onChange={onChangePassword}
             />
+
             <input
+              suppressHydrationWarning
               className={styles.modal__input}
               type="password"
               name="password"
               placeholder="Повторите пароль"
               value={repeatPassword}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setRepeatPassword(e.target.value)
-              }
+              onChange={onChangeRepeatPassword}
             />
 
             {errorMessage && (

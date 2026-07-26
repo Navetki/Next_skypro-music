@@ -6,24 +6,35 @@ import classnames from 'classnames';
 import styles from './Bar.module.css';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
-  setIsPlay,
+  setIsPlaying,
   setNextTrack,
   setPrevTrack,
-  toggleLoop,
-  toggleShuffle,
+  setIsShuffled,
 } from '@/store/features/trackSlice';
 import ProgressBar from '../ProgressBar/ProgressBar';
+import { useLikeTrack } from '@/hooks/useLikeTracks';
+import { TrackType } from '@/SharedTypes/ShareTypes';
+
+type ApiTrackType = TrackType & {
+  id?: number | string;
+  title?: string;
+  artist?: string;
+  duration?: number;
+  fileUrl?: string;
+};
 
 export default function Bar() {
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const isShuffle = useAppSelector((state) => state.tracks.isShuffle);
-  const isLoop = useAppSelector((state) => state.tracks.isLoop);
+  const [isLoop, setIsLoop] = useState(false);
   const dispatch = useAppDispatch();
+
+  const { toggleLike, isLike } = useLikeTrack(currentTrack as TrackType);
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(0.5);
+  const [volume] = useState(0.5);
   const [isLoadedTrack, setIsLoadedTrack] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -31,8 +42,11 @@ export default function Bar() {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
+      if (isPlay) {
+        audioRef.current.play().catch(() => {});
+      }
     }
-  }, [volume, currentTrack]);
+  }, [currentTrack, isPlay, volume]);
 
   const resetTrackProgress = () => {
     setIsLoadedTrack(false);
@@ -46,10 +60,10 @@ export default function Bar() {
 
     if (isPlay) {
       audio.pause();
-      dispatch(setIsPlay(false));
+      dispatch(setIsPlaying(false));
     } else {
       audio.play().catch(() => {});
-      dispatch(setIsPlay(true));
+      dispatch(setIsPlaying(true));
     }
   };
 
@@ -96,11 +110,14 @@ export default function Bar() {
   };
 
   const onToggleShuffle = () => {
-    dispatch(toggleShuffle());
+    dispatch(setIsShuffled(!isShuffle));
   };
 
   const onToggleLoop = () => {
-    dispatch(toggleLoop());
+    if (audioRef.current) {
+      audioRef.current.loop = !isLoop;
+      setIsLoop(!isLoop);
+    }
   };
 
   const formatTime = (time: number) => {
@@ -109,6 +126,11 @@ export default function Bar() {
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
+
+  const apiTrack = currentTrack as ApiTrackType | null;
+  const trackName = apiTrack?.name || apiTrack?.title || 'Без названия';
+  const trackAuthor =
+    apiTrack?.author || apiTrack?.artist || 'Неизвестный исполнитель';
 
   return (
     <div
@@ -205,7 +227,8 @@ export default function Bar() {
                   <use xlinkHref="/img/icon/sprite.svg#icon-shuffle"></use>
                 </svg>
               </div>
-            </div>{' '}
+            </div>
+
             <div className={styles.playerTrackPlay}>
               <div className={styles.trackPlayContain}>
                 <div className={styles.trackPlayImage}>
@@ -215,36 +238,46 @@ export default function Bar() {
                 </div>
                 <div className={styles.trackPlayAuthor}>
                   <Link className={styles.trackPlayAuthorLink} href="#">
-                    {currentTrack?.name || ''}
+                    {trackName}
                   </Link>
                 </div>
                 <div className={styles.trackPlayAlbum}>
                   <Link className={styles.trackPlayAlbumLink} href="#">
-                    {currentTrack?.author || ''}
+                    {trackAuthor}
                   </Link>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className={styles.barVolumeBlock}>
-            <div className={styles.volumeContent}>
-              <div className={styles.volumeImage}>
-                <svg className={styles.volumeSvg}>
-                  <use xlinkHref="/img/icon/sprite.svg#icon-volume"></use>
-                </svg>
-              </div>
-              <div className={classnames(styles.volumeProgress, styles.btn)}>
-                <input
-                  className={classnames(styles.volumeProgressLine, styles.btn)}
-                  type="range"
-                  name="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={volume}
-                  onChange={(e) => setVolume(Number(e.target.value))}
-                />
+              <div className={styles.trackPlayLikeDis}>
+                <div
+                  onClick={toggleLike}
+                  className={classnames(styles.trackPlayLike, styles.btnIcon)}
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginLeft: '10px',
+                  }}
+                >
+                  <svg
+                    className={styles.trackPlayLikeSvg}
+                    style={{
+                      width: '14px',
+                      height: '12px',
+                      fill: isLike ? '#b672ff' : 'transparent',
+                      stroke: isLike ? '#b672ff' : '#b1b1b1',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <use
+                      xlinkHref={
+                        isLike
+                          ? '/img/icon/sprite.svg#icon-like'
+                          : '/img/icon/sprite.svg#icon-dislike'
+                      }
+                    ></use>
+                  </svg>
+                </div>
               </div>
             </div>
           </div>

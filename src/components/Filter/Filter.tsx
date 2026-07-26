@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import classNames from 'classnames';
 import { getUniqueValueByKey, YEAR_OPTIONS } from '@/utils/helper';
 import FilterItem from '../FilterItem/FilterItem';
@@ -14,12 +14,17 @@ interface FilterProps {
 export default function Filter({ tracks }: FilterProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
-  const handleFilterClick = (filterName: string) => {
+  const handleFilterClick = useCallback((filterName: string) => {
     setActiveFilter((prev) => (prev === filterName ? null : filterName));
-  };
+  }, []);
 
-  const authors = getUniqueValueByKey(tracks, 'author');
-  const genres = getUniqueValueByKey(tracks, 'genre');
+  const authors = useMemo(() => {
+    return getUniqueValueByKey(tracks, 'author');
+  }, [tracks]);
+
+  const genres = useMemo(() => {
+    return getUniqueValueByKey(tracks, 'genre');
+  }, [tracks]);
 
   return (
     <div className={styles.filter}>

@@ -1,50 +1,54 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../constants';
 
-type authUserProps = {
-  email: string;
-  password: string;
-};
+const MAIN_URL = API_BASE_URL;
 
-export type authUserReturn = {
-  message?: string;
-  success?: boolean;
-  username?: string;
+export interface createUserProp {
   email?: string;
-  result?: {
-    email: string;
-    username: string;
-    _id: number;
-  };
-  access?: string;
-  refresh?: string;
-  token?: string;
+  password?: string;
+  username?: string;
+}
+
+export interface UserResponse {
+  id: number;
+  username: string;
+  email: string;
+}
+
+export const createUser = (data: createUserProp) => {
+  return axios({
+    method: 'post',
+    url: MAIN_URL + '/user/signup/',
+    data,
+  });
 };
 
-export const authUser = (data: authUserProps): Promise<authUserReturn> => {
-  const url = API_BASE_URL.endsWith('/')
-    ? `${API_BASE_URL}user/login/`
-    : `${API_BASE_URL}/user/login/`;
-  return axios
-    .post<authUserReturn>(url, data, {
-      headers: {
-        'content-type': 'application/json',
-      },
-    })
-    .then((response) => response.data);
+export const loginUser = (data: createUserProp) => {
+  return axios({
+    method: 'post',
+    url: MAIN_URL + '/user/login/',
+    data,
+  });
 };
 
-export const signUpUser = (
-  data: authUserProps & { username: string },
-): Promise<authUserReturn> => {
-  const url = API_BASE_URL.endsWith('/')
-    ? `${API_BASE_URL}user/signup/`
-    : `${API_BASE_URL}/user/signup/`;
+type accessTokenType = {
+  access: string;
+};
+
+export type refreshTokenType = {
+  refresh: string;
+};
+
+type tokensType = accessTokenType & refreshTokenType;
+
+export const getTokens = (data: createUserProp): Promise<tokensType> => {
+  return axios.post(MAIN_URL + '/user/token/', data).then((res) => res.data);
+};
+
+export const refreshToken = (
+  args: refreshTokenType,
+): Promise<accessTokenType> => {
   return axios
-    .post<authUserReturn>(url, data, {
-      headers: {
-        'content-type': 'application/json',
-      },
-    })
-    .then((response) => response.data);
+    .post(MAIN_URL + '/user/token/refresh/', { refresh: args.refresh })
+    .then((res) => res.data);
 };

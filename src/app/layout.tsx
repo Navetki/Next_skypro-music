@@ -1,34 +1,17 @@
-import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
+'use client';
+
+import { ReactNode } from 'react';
+import { Provider } from 'react-redux';
+import { makeStore } from '@/store/store';
 import './globals.css';
-import ReduxProvider from '@/store/ReduxProvider';
 
-const montserrat = Montserrat({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-montserrat',
-});
+const store = makeStore();
 
-export const metadata: Metadata = {
-  title: 'Skypro Music',
-  description: 'Музыкальный плеер',
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ru">
-      <head>
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content="upgrade-insecure-requests"
-        />
-      </head>
-      <body className={`${montserrat.className} ${montserrat.variable}`}>
-        <ReduxProvider>{children}</ReduxProvider>
+      <body>
+        <Provider store={store}>{children}</Provider>
       </body>
     </html>
   );

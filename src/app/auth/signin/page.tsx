@@ -1,6 +1,6 @@
 'use client';
 
-import { authUser, authUserReturn } from '@/services/auth/authApi';
+import { loginUser, getTokens } from '@/services/auth/authApi';
 import styles from './signin.module.css';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -8,6 +8,11 @@ import { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import Image from 'next/image';
+
+interface TokensResponse {
+  access?: string;
+  refresh?: string;
+}
 
 export default function Signin() {
   const router = useRouter();
@@ -24,7 +29,7 @@ export default function Signin() {
     setPassword(e.target.value);
   };
 
-  const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -35,18 +40,21 @@ export default function Signin() {
 
     setIsLoading(true);
 
-    authUser({ email, password })
-      .then((res: authUserReturn) => {
-        console.log('Успешный вход от сервера:', res);
+    loginUser({ email, password })
+      .then(() => {
+        return getTokens({ email, password });
+      })
+      .then((tokensData: unknown) => {
+        console.log('Токены успешно получены:', tokensData);
 
-        const userData = res.result || res;
-        const token = res.access || res.token || 'local_session_token_success';
+        const tokens = tokensData as TokensResponse;
+        const token = tokens?.access || 'local_session_token_success';
+        const refresh = tokens?.refresh || '';
+        const username = email.split('@')[0];
 
         localStorage.setItem('token', token);
-        localStorage.setItem(
-          'username',
-          userData.username || userData.email || 'Пользователь',
-        );
+        localStorage.setItem('refreshToken', refresh);
+        localStorage.setItem('username', username);
 
         router.push('/music/main');
       })
@@ -61,7 +69,7 @@ export default function Signin() {
             JSON.stringify(serverError);
           setErrorMessage(msg || 'Неверная почта или пароль');
         } else {
-          setErrorMessage('Ошибка сети. Не удалось связаться с сервером.');
+          setErrorMessage('Ошибка авторизации. Не удалось получить токены.');
         }
       })
       .finally(() => {
