@@ -105,14 +105,44 @@
   color: #4e4e4e;
 }
 
+.trackTime {
+  display: flex;
+  align-items: center;
+}
+
+.trackLikeBtn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
 .trackTimeSvg {
   width: 14px;
   height: 12px;
   margin-right: 17px;
   fill: transparent;
   stroke: #4e4e4e;
+  stroke-width: 1.5px;
+  transition:
+    transform 0.2s ease,
+    stroke 0.2s ease,
+    fill 0.2s ease;
 }
 
+.trackTimeSvg:hover {
+  stroke: #acacac;
+}
+
+.trackTimeSvgActive {
+  fill: #b672ff;
+  stroke: #b672ff;
+  transform: scale(1.15);
+}
 .trackTimeText {
   font-style: normal;
   font-weight: 400;
@@ -121,9 +151,11 @@
   text-align: right;
   color: #4e4e4e;
 }
+
 .activeTrackText {
   color: #b674ff;
 }
+
 .playingDot {
   width: 12px;
   height: 12px;

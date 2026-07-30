@@ -8,6 +8,7 @@ export const makeStore = () => {
   return configureStore({
     reducer: combineReducers({
       tracks: trackSliceReducer,
+      auth: trackSliceReducer,
     }),
   });
 };

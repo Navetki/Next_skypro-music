@@ -4,92 +4,111 @@ import { TrackType } from '@/SharedTypes/ShareTypes';
 type initialStateType = {
   currentTrack: TrackType | null;
   isPlay: boolean;
+  currentPlaylist: TrackType[];
   playlist: TrackType[];
   shuffledPlaylist: TrackType[];
   isShuffle: boolean;
-  isLoop: boolean;
+  allTracks: TrackType[];
+  favoriteTracks: TrackType[];
+  fetchError: null | string;
+  fetchIsLoading: boolean;
 };
 
 const initialState: initialStateType = {
   currentTrack: null,
   isPlay: false,
   playlist: [],
+  currentPlaylist: [],
   shuffledPlaylist: [],
   isShuffle: false,
-  isLoop: false,
+  allTracks: [],
+  favoriteTracks: [],
+  fetchError: null,
+  fetchIsLoading: true,
 };
 
 const trackSlice = createSlice({
-  name: 'tracks',
+  name: 'Tracks',
   initialState,
   reducers: {
-    setCurrentTrack: (state, action: PayloadAction<TrackType | null>) => {
+    setCurrentTrack: (state, action: PayloadAction<TrackType>) => {
       state.currentTrack = action.payload;
     },
+    setIsPlaying: (state, action: PayloadAction<boolean>) => {
+      state.isPlay = action.payload;
+    },
+    setIsShuffled: (state, action: PayloadAction<boolean>) => {
+      state.isShuffle = action.payload;
+    },
     setCurrentPlaylist: (state, action: PayloadAction<TrackType[]>) => {
-      state.playlist = action.payload;
+      state.currentPlaylist = action.payload;
       state.shuffledPlaylist = [...action.payload].sort(
         () => Math.random() - 0.5,
       );
     },
-    setIsPlay: (state, action: PayloadAction<boolean>) => {
-      state.isPlay = action.payload;
-    },
-    toggleShuffle: (state) => {
-      state.isShuffle = !state.isShuffle;
-
-      if (state.isShuffle) {
-        state.shuffledPlaylist = [...state.playlist].sort(
-          () => Math.random() - 0.5,
-        );
-      }
-    },
-    toggleLoop: (state) => {
-      state.isLoop = !state.isLoop;
-    },
     setNextTrack: (state) => {
-      const playlist = state.isShuffle
+      const currentList = state.isShuffle
         ? state.shuffledPlaylist
-        : state.playlist;
-
-      if (!state.currentTrack || playlist.length === 0) return;
-
-      const curIndex = playlist.findIndex(
-        (el) => el._id === state.currentTrack?._id,
+        : state.currentPlaylist;
+      const index = currentList.findIndex(
+        (t) => t._id === state.currentTrack?._id,
       );
-
-      if (curIndex !== -1 && curIndex < playlist.length - 1) {
-        state.currentTrack = playlist[curIndex + 1];
-        state.isPlay = true;
+      if (index !== -1 && index < currentList.length - 1) {
+        state.currentTrack = currentList[index + 1];
       }
     },
     setPrevTrack: (state) => {
-      const playlist = state.isShuffle
+      const currentList = state.isShuffle
         ? state.shuffledPlaylist
-        : state.playlist;
-
-      if (!state.currentTrack || playlist.length === 0) return;
-
-      const curIndex = playlist.findIndex(
-        (el) => el._id === state.currentTrack?._id,
+        : state.currentPlaylist;
+      const index = currentList.findIndex(
+        (t) => t._id === state.currentTrack?._id,
       );
-
-      if (curIndex > 0) {
-        state.currentTrack = playlist[curIndex - 1];
-        state.isPlay = true;
+      if (index > 0) {
+        state.currentTrack = currentList[index - 1];
       }
+    },
+    setAllTracks: (state, action: PayloadAction<TrackType[]>) => {
+      state.allTracks = action.payload;
+    },
+    setFavoriteTracks: (state, action: PayloadAction<TrackType[]>) => {
+      state.favoriteTracks = action.payload;
+    },
+    setFetchError: (state, action: PayloadAction<string>) => {
+      state.fetchError = action.payload;
+    },
+    addLikedTracks: (state, action: PayloadAction<TrackType>) => {
+      const isExist = state.favoriteTracks.some(
+        (t) => t._id === action.payload._id,
+      );
+      if (!isExist) {
+        state.favoriteTracks.push(action.payload);
+      }
+    },
+    removeLikedTracks: (state, action: PayloadAction<TrackType>) => {
+      state.favoriteTracks = state.favoriteTracks.filter(
+        (t) => t._id !== action.payload._id,
+      );
+    },
+    setFetchIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.fetchIsLoading = action.payload;
     },
   },
 });
 
 export const {
   setCurrentTrack,
-  setIsPlay,
+  setIsPlaying,
   setCurrentPlaylist,
-  toggleShuffle,
-  toggleLoop,
   setNextTrack,
   setPrevTrack,
+  setIsShuffled,
+  setAllTracks,
+  setFetchError,
+  setFavoriteTracks,
+  addLikedTracks,
+  removeLikedTracks,
+  setFetchIsLoading,
 } = trackSlice.actions;
 
 export const trackSliceReducer = trackSlice.reducer;

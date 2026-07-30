@@ -1,5 +1,6 @@
 'use client';
 
+import classnames from 'classnames';
 import { TrackType } from '@/SharedTypes/ShareTypes';
 import Filter from '@/components/Filter/Filter';
 import Track from '@/components/Track/Track';
@@ -14,128 +15,58 @@ interface CenterblockProps {
 }
 
 export default function Centerblock({
-  error,
+  error: errorRes,
   title = 'Треки',
   tracks,
   isLoading,
 }: CenterblockProps) {
-  return (
-    <div
-      className={styles.mainCenterblock || ''}
-      style={{ width: 'auto', flexGrow: 1, padding: '20px 40px 20px 0' }}
-    >
-      <Search title={title} />
-      <Filter tracks={tracks} />
-      <h2
-        className={styles.centerblockH2 || ''}
-        style={{
-          color: '#ffffff',
-          fontSize: '64px',
-          marginBottom: '45px',
-          fontWeight: 400,
-        }}
-      >
-        {title}
-      </h2>
+  const cn = classnames;
 
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+  return (
+    <div className={styles.mainCenterblock}>
+      <Search title="Поиск" />
+      <Filter tracks={isLoading ? [] : tracks} />
+      <h2 className={styles.centerblockH2}>{title}</h2>
+      <div>
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'row',
+            display: 'grid',
+            gridTemplateColumns: '447px 321px 245px 60px',
             alignItems: 'center',
             marginBottom: '24px',
-            paddingLeft: '5px',
+            color: '#4e4e4e',
+            textTransform: 'uppercase',
+            fontSize: '14px',
+            lineHeight: '24px',
+            letterSpacing: '2px',
           }}
         >
+          <div>Трек</div>
+          <div>Исполнитель</div>
+          <div>Альбом</div>
           <div
             style={{
-              fontStyle: 'normal',
-              fontWeight: 400,
-              fontSize: '14px',
-              lineHeight: '24px',
-              letterSpacing: '2px',
-              color: '#ffffff',
-              textTransform: 'uppercase',
-              width: '447px',
-            }}
-          >
-            Трек
-          </div>
-          <div
-            style={{
-              fontStyle: 'normal',
-              fontWeight: 400,
-              fontSize: '14px',
-              lineHeight: '24px',
-              letterSpacing: '2px',
-              color: '#ffffff',
-              textTransform: 'uppercase',
-              width: '321px',
-            }}
-          >
-            Исполнитель
-          </div>
-          <div
-            style={{
-              fontStyle: 'normal',
-              fontWeight: 400,
-              fontSize: '14px',
-              lineHeight: '24px',
-              letterSpacing: '2px',
-              color: '#ffffff',
-              textTransform: 'uppercase',
-              width: '245px',
-            }}
-          >
-            Альбом
-          </div>
-          <div
-            style={{
-              width: '60px',
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'flex-end',
               alignItems: 'center',
             }}
           >
-            <svg
-              style={{
-                width: '12px',
-                height: '12px',
-                fill: 'transparent',
-                stroke: '#ffffff',
-              }}
-            >
+            <svg className={styles.watchSvg}>
               <use xlinkHref="/img/icon/sprite.svg#icon-watch"></use>
             </svg>
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {error && (
+        <div>
+          {errorRes ? (
             <div
-              style={{
-                color: '#ff4d4d',
-                padding: '10px 0',
-                fontSize: '16px',
-                fontWeight: 500,
-              }}
+              style={{ color: '#ff4d4d', padding: '10px 0', fontSize: '16px' }}
             >
-              {error}
+              {errorRes}
             </div>
-          )}
-
-          {isLoading ? (
-            <div
-              style={{ color: '#ffffff', padding: '20px', fontSize: '18px' }}
-            >
-              Загрузка треков...
-            </div>
-          ) : tracks.length === 0 ? (
-            <div
-              style={{ color: '#ffffff', padding: '20px', fontSize: '18px' }}
-            >
-              Треки отсутствуют
+          ) : isLoading ? (
+            <div style={{ color: '#ffffff', fontSize: '16px' }}>
+              Загрузка...
             </div>
           ) : (
             tracks.map((track) => (

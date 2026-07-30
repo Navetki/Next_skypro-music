@@ -6,52 +6,45 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setCurrentPlaylist,
   setCurrentTrack,
-  setIsPlay,
+  setIsPlaying,
 } from '@/store/features/trackSlice';
 import { TrackType } from '@/SharedTypes/ShareTypes';
 import { formatTime } from '@/utils/helper';
+import { useLikeTrack } from '@/hooks/useLikeTracks';
 
-type ApiTrackType = TrackType & {
-  id?: number | string;
-  title?: string;
-  artist?: string;
-  duration?: number;
-  fileUrl?: string;
-};
-
-interface TrackProps {
+interface TrackComponentProps {
   track: TrackType;
   playlist: TrackType[];
 }
 
-export default function Track({ track, playlist }: TrackProps) {
+export default function Track({ track, playlist }: TrackComponentProps) {
   const dispatch = useAppDispatch();
 
-  const currentTrack = useAppSelector(
-    (state) => state.tracks.currentTrack,
-  ) as ApiTrackType | null;
+  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
 
-  const apiTrack = track as ApiTrackType;
-  console.log('ДАННЫЕ ОДНОГО ТРЕКА В КОМПОНЕНТЕ:', apiTrack);
+  const { toggleLike, isLike } = useLikeTrack(track);
 
-  const trackUrl = apiTrack.track_file || apiTrack.fileUrl || '';
-  const currentTrackUrl =
-    currentTrack?.track_file || currentTrack?.fileUrl || '';
   const isCurrentTrack =
-    trackUrl !== '' && currentTrackUrl !== '' && currentTrackUrl === trackUrl;
+    track._id !== undefined &&
+    currentTrack?._id !== undefined &&
+    currentTrack._id === track._id;
 
   const handleTrackClick = () => {
     dispatch(setCurrentPlaylist(playlist));
     dispatch(setCurrentTrack(track));
-    dispatch(setIsPlay(true));
+    dispatch(setIsPlaying(true));
   };
 
-  const trackName = apiTrack.name || apiTrack.title || 'Без названия';
-  const trackAuthor =
-    apiTrack.author || apiTrack.artist || 'Неизвестный исполнитель';
-  const trackAlbum = apiTrack.album || 'Вне альбома';
-  const duration = apiTrack.duration_in_seconds || apiTrack.duration || 0;
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleLike();
+  };
+
+  const trackName = track.name || 'Без названия';
+  const trackAuthor = track.author || 'Неизвестный исполнитель';
+  const trackAlbum = track.album || 'Вне альбома';
+  const duration = track.duration_in_seconds || 0;
 
   return (
     <div className={styles.playlistItem} onClick={handleTrackClick}>
@@ -88,7 +81,28 @@ export default function Track({ track, playlist }: TrackProps) {
         <div className={styles.trackAlbum}>
           <span className={styles.trackAlbumLink}>{trackAlbum}</span>
         </div>
+
         <div className={styles.trackTime}>
+          <button
+            type="button"
+            className={styles.trackLikeBtn}
+            onClick={handleLikeClick}
+          >
+            <svg
+              className={classnames(
+                styles.trackTimeSvg,
+                isLike && styles.trackTimeSvgActive,
+              )}
+            >
+              <use
+                xlinkHref={
+                  isLike
+                    ? '/img/icon/sprite.svg#icon-like'
+                    : '/img/icon/sprite.svg#icon-dislike'
+                }
+              ></use>
+            </svg>
+          </button>
           <span className={styles.trackTimeText}>{formatTime(duration)}</span>
         </div>
       </div>

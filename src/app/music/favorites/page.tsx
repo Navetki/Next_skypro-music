@@ -1,11 +1,13 @@
 'use client';
 
-import Centerblock from '@/components/Centerblock/Centerblock';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store/store';
 import styles from '@/app/music/main/page.module.css';
 import dynamic from 'next/dynamic';
 
 import Nav from '@/components/Nav/Nav';
+import Centerblock from '@/components/Centerblock/Centerblock';
 import Bar from '@/components/Bar/Bar';
 import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
 import { RootState } from '@/store/store';
@@ -14,10 +16,21 @@ const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
   ssr: false,
 });
 
-export default function MainPage() {
-  const { fetchError, fetchIsLoading, allTracks } = useAppSelector(
+export default function FavoritesPage() {
+  const router = useRouter();
+
+  const { favoriteTracks, fetchIsLoading, fetchError } = useAppSelector(
     (state: RootState) => state.tracks,
   );
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/music/main');
+      }
+    }
+  }, [router]);
 
   return (
     <div className={styles.wrapper}>
@@ -26,10 +39,10 @@ export default function MainPage() {
           <FetchingTracks />
           <Nav />
           <Centerblock
-            tracks={allTracks}
+            tracks={favoriteTracks || []}
             isLoading={fetchIsLoading}
             error={fetchError}
-            title="Треки"
+            title="Мои треки"
           />
           <Sidebar />
         </main>

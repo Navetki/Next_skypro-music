@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import styles from '../../page.module.css';
+import { useParams, useRouter } from 'next/navigation';
+import styles from '@/app/music/main/page.module.css';
 import dynamic from 'next/dynamic';
 
 import { getSelectionTracks } from '@/services/tracks/tracksApi';
@@ -13,6 +13,7 @@ import { data as mockTracks } from '@/data';
 import Nav from '@/components/Nav/Nav';
 import Centerblock from '@/components/Centerblock/Centerblock';
 import Bar from '@/components/Bar/Bar';
+import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
 
 const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
   ssr: false,
@@ -31,10 +32,14 @@ interface CustomTrackType extends TrackType {
 export default function CategoryPage() {
   const params = useParams<{ id: string }>();
   const categoryId = params?.id;
+  const router = useRouter();
 
   const reduxPlaylist = useAppSelector(
-    (state) =>
-      ((state.tracks as Record<string, unknown>).playlist as TrackType[]) || [],
+    (state) => (state.tracks.allTracks as TrackType[]) || [],
+  );
+
+  const favoriteTracks = useAppSelector(
+    (state) => (state.tracks.favoriteTracks as TrackType[]) || [],
   );
 
   const [selectionTracks, setSelectionTracks] = useState<TrackType[] | null>(
@@ -42,11 +47,33 @@ export default function CategoryPage() {
   );
   const [error, setError] = useState('');
 
-  const selectionTitle = categoryId ? SELECTION_NAMES[categoryId] : 'Подборка';
+  const selectionTitle =
+    categoryId === 'favorites'
+      ? 'Мои треки'
+      : categoryId
+        ? SELECTION_NAMES[categoryId] || 'Подборка'
+        : 'Подборка';
+
   const isLoading = selectionTracks === null;
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (!token && categoryId === 'favorites') {
+        router.push('/music/main');
+        return;
+      }
+    }
+
     if (!categoryId) return;
+
+    if (categoryId === 'favorites') {
+      setTimeout(() => {
+        setSelectionTracks(favoriteTracks);
+        setError('');
+      }, 0);
+      return;
+    }
 
     getSelectionTracks(categoryId)
       .then((res: unknown) => {
@@ -55,7 +82,7 @@ export default function CategoryPage() {
         if (rawArray.length === 0) {
           setSelectionTracks(mockTracks as TrackType[]);
         } else {
-          const firstItem = rawArray[0];
+          const firstItem = rawArray;
           if (typeof firstItem === 'number' || typeof firstItem === 'string') {
             const ids = rawArray as (string | number)[];
             const matched = ids
@@ -83,12 +110,13 @@ export default function CategoryPage() {
         setError('Не удалось загрузить треки из этой подборки');
         setSelectionTracks(mockTracks as TrackType[]);
       });
-  }, [categoryId]);
+  }, [categoryId, reduxPlaylist, favoriteTracks, router]);
 
   return (
     <div className={styles.wrapper}>
       <div className="container">
         <main className={styles.main}>
+          <FetchingTracks />
           <Nav />
           <Centerblock
             title={selectionTitle}
