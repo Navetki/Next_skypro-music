@@ -1,7 +1,7 @@
 'use client';
 
 import Centerblock from '@/components/Centerblock/Centerblock';
-import { useAppSelector } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import styles from '@/app/music/main/page.module.css';
 import dynamic from 'next/dynamic';
 
@@ -9,15 +9,33 @@ import Nav from '@/components/Nav/Nav';
 import Bar from '@/components/Bar/Bar';
 import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
 import { RootState } from '@/store/store';
+import { useMemo, useEffect } from 'react';
+import { resetFilters } from '@/store/features/trackSlice';
 
 const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
   ssr: false,
 });
 
 export default function MainPage() {
-  const { fetchError, fetchIsLoading, allTracks } = useAppSelector(
-    (state: RootState) => state.tracks,
-  );
+  const dispatch = useAppDispatch();
+  const { fetchError, fetchIsLoading, allTracks, filteredTracks, filters } =
+    useAppSelector((state: RootState) => state.tracks);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetFilters());
+    };
+  }, [dispatch]);
+
+  const playlist = useMemo(() => {
+    const hasActiveFilters =
+      filters.authors.length > 0 ||
+      filters.genres.length > 0 ||
+      filters.search.trim() !== '' ||
+      filters.years !== 'По умолчанию';
+
+    return hasActiveFilters ? filteredTracks : allTracks;
+  }, [filteredTracks, allTracks, filters]);
 
   return (
     <div className={styles.wrapper}>
@@ -26,7 +44,8 @@ export default function MainPage() {
           <FetchingTracks />
           <Nav />
           <Centerblock
-            tracks={allTracks}
+            pagePlaylist={allTracks}
+            tracks={playlist}
             isLoading={fetchIsLoading}
             error={fetchError}
             title="Треки"

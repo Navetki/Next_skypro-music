@@ -1,26 +1,22 @@
 'use client';
 
-import { useState } from 'react';
 import styles from './Search.module.css';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { setSearchValue } from '@/store/features/trackSlice';
 
-type searchProp = {
-  title: string;
-};
-
-export default function Search({ title }: searchProp) {
-  const [searchInput, setSearchInput] = useState('');
+export default function Search() {
+  const dispatch = useAppDispatch();
+  const searchInput = useAppSelector((state) => state.tracks.filters.search);
 
   const onSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
+    dispatch(setSearchValue(e.target.value));
   };
-  console.log(title);
 
   return (
     <div className={styles.search}>
       <svg className={styles.searchSvg}>
         <use xlinkHref="/img/icon/sprite.svg#icon-search"></use>
       </svg>
-      {title}
       <input
         className={styles.searchText}
         type="search"

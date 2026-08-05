@@ -1,6 +1,5 @@
 'use client';
 
-import classnames from 'classnames';
 import { TrackType } from '@/SharedTypes/ShareTypes';
 import Filter from '@/components/Filter/Filter';
 import Track from '@/components/Track/Track';
@@ -12,6 +11,7 @@ interface CenterblockProps {
   tracks: TrackType[];
   isLoading: boolean;
   error: string | null;
+  pagePlaylist: TrackType[];
 }
 
 export default function Centerblock({
@@ -19,13 +19,12 @@ export default function Centerblock({
   title = 'Треки',
   tracks,
   isLoading,
+  pagePlaylist,
 }: CenterblockProps) {
-  const cn = classnames;
-
   return (
     <div className={styles.mainCenterblock}>
-      <Search title="Поиск" />
-      <Filter tracks={isLoading ? [] : tracks} />
+      <Search />
+      <Filter tracks={isLoading ? [] : pagePlaylist} />
       <h2 className={styles.centerblockH2}>{title}</h2>
       <div>
         <div
@@ -67,6 +66,17 @@ export default function Centerblock({
           ) : isLoading ? (
             <div style={{ color: '#ffffff', fontSize: '16px' }}>
               Загрузка...
+            </div>
+          ) : tracks.length === 0 ? (
+            <div
+              style={{
+                color: '#ffffff',
+                fontSize: '18px',
+                textAlign: 'center',
+                marginTop: '40px',
+              }}
+            >
+              Нет подходящих треков
             </div>
           ) : (
             tracks.map((track) => (

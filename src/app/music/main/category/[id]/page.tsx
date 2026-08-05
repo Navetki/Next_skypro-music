@@ -123,6 +123,7 @@ export default function CategoryPage() {
             tracks={selectionTracks || []}
             error={error || null}
             isLoading={isLoading}
+            pagePlaylist={selectionTracks || []}
           />
           <Sidebar />
         </main>
