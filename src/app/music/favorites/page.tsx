@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppSelector } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import styles from '@/app/music/main/page.module.css';
 import dynamic from 'next/dynamic';
 
@@ -11,6 +11,7 @@ import Centerblock from '@/components/Centerblock/Centerblock';
 import Bar from '@/components/Bar/Bar';
 import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
 import { RootState } from '@/store/store';
+import { setPagePlayList, resetFilters } from '@/store/features/trackSlice';
 
 const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
   ssr: false,
@@ -18,10 +19,15 @@ const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
 
 export default function FavoritesPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
-  const { favoriteTracks, fetchIsLoading, fetchError } = useAppSelector(
-    (state: RootState) => state.tracks,
-  );
+  const {
+    favoriteTracks,
+    fetchIsLoading,
+    fetchError,
+    filteredTracks,
+    filters,
+  } = useAppSelector((state: RootState) => state.tracks);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -32,6 +38,28 @@ export default function FavoritesPage() {
     }
   }, [router]);
 
+  useEffect(() => {
+    if (favoriteTracks && favoriteTracks.length > 0) {
+      dispatch(setPagePlayList(favoriteTracks));
+    }
+  }, [favoriteTracks, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetFilters());
+    };
+  }, [dispatch]);
+
+  const playlist = useMemo(() => {
+    const hasActiveFilters =
+      filters.authors.length > 0 ||
+      filters.genres.length > 0 ||
+      filters.search.trim() !== '' ||
+      filters.years !== 'По умолчанию';
+
+    return hasActiveFilters ? filteredTracks : favoriteTracks;
+  }, [filteredTracks, favoriteTracks, filters]);
+
   return (
     <div className={styles.wrapper}>
       <div className="container">
@@ -39,7 +67,8 @@ export default function FavoritesPage() {
           <FetchingTracks />
           <Nav />
           <Centerblock
-            tracks={favoriteTracks || []}
+            pagePlaylist={favoriteTracks || []}
+            tracks={playlist || []}
             isLoading={fetchIsLoading}
             error={fetchError}
             title="Мои треки"

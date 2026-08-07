@@ -29,6 +29,7 @@
   background: transparent;
   color: white;
   cursor: pointer;
+  position: relative;
 }
 
 .filter__button:not(:last-child) {
@@ -88,4 +89,23 @@
 .filter__list::-webkit-scrollbar-thumb {
   background-color: white;
   border-radius: 2px;
+}
+.filterItemText_active {
+  color: #b1a2fc;
+  font-weight: 700;
+}
+
+.filter__counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ad61ff;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

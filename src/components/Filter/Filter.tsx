@@ -6,12 +6,24 @@ import { getUniqueValueByKey, YEAR_OPTIONS } from '@/utils/helper';
 import FilterItem from '../FilterItem/FilterItem';
 import styles from './Filter.module.css';
 import { TrackType } from '@/SharedTypes/ShareTypes';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import {
+  setFilterAuthors,
+  setFilterGenres,
+  setFilterYears,
+} from '@/store/features/trackSlice';
 
 interface FilterProps {
   tracks: TrackType[];
 }
 
 export default function Filter({ tracks }: FilterProps) {
+  const dispatch = useAppDispatch();
+
+  const activeAuthors = useAppSelector((state) => state.tracks.filters.authors);
+  const activeGenres = useAppSelector((state) => state.tracks.filters.genres);
+  const activeYear = useAppSelector((state) => state.tracks.filters.years);
+
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const handleFilterClick = useCallback((filterName: string) => {
@@ -38,12 +50,25 @@ export default function Filter({ tracks }: FilterProps) {
           })}
         >
           исполнителю
+          {activeAuthors.length > 0 && (
+            <span className={styles.filter__counter}>
+              {activeAuthors.length}
+            </span>
+          )}
         </button>
         {activeFilter === 'author' && (
           <div className={styles.filter__popup}>
             <ul className={styles.filter__list}>
               {authors.map((author, index) => (
-                <FilterItem key={index} value={author} />
+                <div
+                  key={index}
+                  onClick={() => dispatch(setFilterAuthors(author))}
+                >
+                  <FilterItem
+                    value={author}
+                    isActive={activeAuthors.includes(author)}
+                  />
+                </div>
               ))}
             </ul>
           </div>
@@ -63,7 +88,9 @@ export default function Filter({ tracks }: FilterProps) {
           <div className={styles.filter__popup}>
             <ul className={styles.filter__list}>
               {YEAR_OPTIONS.map((year, index) => (
-                <FilterItem key={index} value={year} />
+                <div key={index} onClick={() => dispatch(setFilterYears(year))}>
+                  <FilterItem value={year} isActive={activeYear === year} />
+                </div>
               ))}
             </ul>
           </div>
@@ -78,12 +105,25 @@ export default function Filter({ tracks }: FilterProps) {
           })}
         >
           жанру
+          {activeGenres.length > 0 && (
+            <span className={styles.filter__counter}>
+              {activeGenres.length}
+            </span>
+          )}
         </button>
         {activeFilter === 'genre' && (
           <div className={styles.filter__popup}>
             <ul className={styles.filter__list}>
               {genres.map((genre, index) => (
-                <FilterItem key={index} value={genre} />
+                <div
+                  key={index}
+                  onClick={() => dispatch(setFilterGenres(genre))}
+                >
+                  <FilterItem
+                    value={genre}
+                    isActive={activeGenres.includes(genre)}
+                  />
+                </div>
               ))}
             </ul>
           </div>
