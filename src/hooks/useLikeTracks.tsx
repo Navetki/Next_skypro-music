@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import { useState } from 'react';
 import { withReauth } from '@/utils/withReAuth';
 import { RootState } from '@/store/store';
+import { toast } from 'react-toastify';
 
 type returnTypeHook = {
   isLoading: boolean;
@@ -36,9 +37,7 @@ export const useLikeTrack = (track: TrackType): returnTypeHook => {
       localStorage.getItem('refreshToken') || localStorage.getItem('refresh');
 
     if (!currentAccess) {
-      alert(
-        'Ошибка: Токен авторизации не найден в localStorage! Выйдите из аккаунта и зайдите снова.',
-      );
+      toast.warning('Для этого действия необходимо авторизоваться');
       setErrorMsg('Нет авторизации');
       return;
     }
@@ -57,19 +56,24 @@ export const useLikeTrack = (track: TrackType): returnTypeHook => {
       )
         .then(() => {
           dispatch(actionSlice(track));
+          if (isLike) {
+            toast.success('Трек удален из избранного');
+          } else {
+            toast.success('Трек добавлен в избранное');
+          }
         })
         .catch((error) => {
           const apiError =
             error?.response?.data?.detail ||
             'Произошла сетевая ошибка при сохранении лайка';
-          alert(`Ошибка сервера: ${apiError}`);
+          toast.error(`Ошибка сервера: ${apiError}`);
           setErrorMsg(apiError);
         })
         .finally(() => {
           setIsLoading(false);
         });
     } else {
-      alert('Ошибка: Отсутствует refreshToken в системе.');
+      toast.error('Ошибка: Отсутствует refreshToken в системе.');
       setIsLoading(false);
     }
   };

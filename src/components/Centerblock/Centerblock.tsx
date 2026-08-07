@@ -21,6 +21,8 @@ export default function Centerblock({
   isLoading,
   pagePlaylist,
 }: CenterblockProps) {
+  const skeletonRows = Array.from({ length: 8 });
+
   return (
     <div className={styles.mainCenterblock}>
       <Search />
@@ -64,8 +66,45 @@ export default function Centerblock({
               {errorRes}
             </div>
           ) : isLoading ? (
-            <div style={{ color: '#ffffff', fontSize: '16px' }}>
-              Загрузка...
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+            >
+              {skeletonRows.map((_, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '447px 321px 245px 60px',
+                    alignItems: 'center',
+                    height: '51px',
+                    padding: '5px 0',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '17px',
+                    }}
+                  >
+                    <div
+                      className={`${styles.skeletonImage} ${styles.skeletonBlock}`}
+                    />
+                    <div
+                      className={`${styles.skeletonTitle} ${styles.skeletonBlock}`}
+                    />
+                  </div>
+                  <div
+                    className={`${styles.skeletonAuthor} ${styles.skeletonBlock}`}
+                  />
+                  <div
+                    className={`${styles.skeletonAlbum} ${styles.skeletonBlock}`}
+                  />
+                  <div
+                    className={`${styles.skeletonTime} ${styles.skeletonBlock}`}
+                  />
+                </div>
+              ))}
             </div>
           ) : tracks.length === 0 ? (
             <div
