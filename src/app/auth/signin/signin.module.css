@@ -20,6 +20,10 @@
   color: red;
   margin-top: 10px;
   text-align: center;
+  color: #ff4d4d;
+  padding: 10px 0;
+  font-size: 14px;
+  text-align: center;
 }
 
 .modal__block {

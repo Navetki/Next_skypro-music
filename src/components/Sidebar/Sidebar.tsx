@@ -21,11 +21,7 @@ export default function Sidebar() {
     <div className={styles.sidebar}>
       <div className={styles.personal}>
         <p className={styles.personalName}>{username}</p>
-        <div
-          className={styles.icon}
-          onClick={handleLogout}
-          style={{ cursor: 'pointer' }}
-        >
+        <div className={styles.icon} onClick={handleLogout}>
           <svg>
             <use xlinkHref="/img/icon/sprite.svg#logout"></use>
           </svg>

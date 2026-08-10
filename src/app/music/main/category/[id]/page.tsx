@@ -82,7 +82,7 @@ export default function CategoryPage() {
         if (rawArray.length === 0) {
           setSelectionTracks(mockTracks as TrackType[]);
         } else {
-          const firstItem = rawArray;
+          const firstItem = rawArray[0];
           if (typeof firstItem === 'number' || typeof firstItem === 'string') {
             const ids = rawArray as (string | number)[];
             const matched = ids
@@ -128,7 +128,7 @@ export default function CategoryPage() {
           <Sidebar />
         </main>
         <Bar />
-        <footer className={styles.stylesFooter || styles.footer}></footer>
+        <footer className={styles.footer}></footer>
       </div>
     </div>
   );

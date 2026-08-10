@@ -29,29 +29,11 @@ export default function Centerblock({
       <Filter tracks={isLoading ? [] : pagePlaylist} />
       <h2 className={styles.centerblockH2}>{title}</h2>
       <div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '447px 321px 245px 60px',
-            alignItems: 'center',
-            marginBottom: '24px',
-            color: '#4e4e4e',
-            textTransform: 'uppercase',
-            fontSize: '14px',
-            lineHeight: '24px',
-            letterSpacing: '2px',
-          }}
-        >
+        <div className={styles.playlistHeader}>
           <div>Трек</div>
           <div>Исполнитель</div>
           <div>Альбом</div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}
-          >
+          <div className={styles.watchIconWrapper}>
             <svg className={styles.watchSvg}>
               <use xlinkHref="/img/icon/sprite.svg#icon-watch"></use>
             </svg>
@@ -60,33 +42,12 @@ export default function Centerblock({
 
         <div>
           {errorRes ? (
-            <div
-              style={{ color: '#ff4d4d', padding: '10px 0', fontSize: '16px' }}
-            >
-              {errorRes}
-            </div>
+            <div className={styles.errorMessage}>{errorRes}</div>
           ) : isLoading ? (
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-            >
+            <div className={styles.skeletonList}>
               {skeletonRows.map((_, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '447px 321px 245px 60px',
-                    alignItems: 'center',
-                    height: '51px',
-                    padding: '5px 0',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '17px',
-                    }}
-                  >
+                <div key={index} className={styles.skeletonRow}>
+                  <div className={styles.skeletonGroup}>
                     <div
                       className={`${styles.skeletonImage} ${styles.skeletonBlock}`}
                     />
@@ -107,16 +68,7 @@ export default function Centerblock({
               ))}
             </div>
           ) : tracks.length === 0 ? (
-            <div
-              style={{
-                color: '#ffffff',
-                fontSize: '18px',
-                textAlign: 'center',
-                marginTop: '40px',
-              }}
-            >
-              Нет подходящих треков
-            </div>
+            <div className={styles.emptyMessage}>Нет подходящих треков</div>
           ) : (
             tracks.map((track) => (
               <Track key={track._id} track={track} playlist={tracks} />

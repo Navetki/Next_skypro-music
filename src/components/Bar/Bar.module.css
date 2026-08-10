@@ -7,6 +7,10 @@
   background: #1c1c1c;
 }
 
+.hidden {
+  display: none;
+}
+
 .barContent {
   display: flex;
   flex-direction: column;
@@ -174,22 +178,36 @@
 .trackPlayDislike {
   padding: 5px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.trackPlayLike {
+  margin-left: 10px;
 }
 
 .trackPlayDislike {
   margin-left: 28.5px;
 }
+
 .trackPlayLikeSvg {
   width: 14px;
   height: 12px;
   fill: transparent;
-  stroke: #696969;
+  stroke: #b1b1b1;
+  transition: all 0.2s ease;
 }
+
 .trackPlayDislikeSvg {
   width: 14.34px;
   height: 13px;
   fill: transparent;
   stroke: #696969;
+}
+
+.trackPlayLike_active .trackPlayLikeSvg {
+  fill: #b672ff;
+  stroke: #b672ff;
 }
 
 .barVolumeBlock {
@@ -210,11 +228,13 @@
   height: 18px;
   margin-right: 17px;
 }
+
 .volumeSvg {
   width: 13px;
   height: 18px;
   fill: transparent;
 }
+
 .volumeProgress {
   width: 109px;
   display: flex;
@@ -236,6 +256,7 @@
   background: #797979;
   border-radius: 5px;
 }
+
 .volumeProgressLine::-webkit-slider-thumb {
   appearance: none;
   width: 16px;
@@ -250,16 +271,19 @@
 .btn {
   cursor: pointer;
 }
+
 .btnIcon:hover svg {
   fill: transparent;
   stroke: #acacac;
   cursor: pointer;
 }
+
 .btnIcon:active svg {
   fill: transparent;
   stroke: #ffffff;
   cursor: pointer;
 }
+
 .btnIcon:active .trackPlayLikeSvg,
 .btnIcon:active .trackPlayDislikeSvg {
   fill: #696969;
@@ -271,4 +295,17 @@
   fill: #ffffff;
   stroke: #ffffff;
   opacity: 1;
+}
+
+.timeCounter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px;
+  color: #b1b1b1;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.audioElement {
+  display: none;
 }
