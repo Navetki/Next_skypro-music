@@ -12,6 +12,7 @@ import {
 import { AxiosError } from 'axios';
 import { withReauth } from '@/utils/withReAuth';
 import { RootState } from '@/store/store';
+import { toast } from 'react-toastify';
 
 export default function FetchingTracks() {
   const dispatch = useAppDispatch();
@@ -26,19 +27,17 @@ export default function FetchingTracks() {
         })
         .catch((error) => {
           if (error instanceof AxiosError) {
+            let message = 'Неизвестная ошибка';
             if (error.response) {
-              dispatch(
-                setFetchError(
-                  error.response.data?.detail ||
-                    error.response.data?.message ||
-                    'Ошибка загрузки',
-                ),
-              );
+              message =
+                error.response.data?.detail ||
+                error.response.data?.message ||
+                'Ошибка загрузки';
             } else if (error.request) {
-              dispatch(setFetchError('Произошла ошибка. Попробуйте позже'));
-            } else {
-              dispatch(setFetchError('Неизвестная ошибка'));
+              message = 'Произошла ошибка сети. Попробуйте позже';
             }
+            dispatch(setFetchError(message));
+            toast.error(message);
           }
         })
         .finally(() => {
@@ -61,6 +60,7 @@ export default function FetchingTracks() {
           })
           .catch((error) => {
             console.error('Ошибка загрузки избранных треков:', error);
+            toast.warning('Не удалось обновить список избранных треков');
           });
       }
     }

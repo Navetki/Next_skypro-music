@@ -73,3 +73,49 @@
   fill: transparent;
   stroke: #b1b1b1;
 }
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeletonBlock {
+  background: linear-gradient(90deg, #313131 25%, #444444 50%, #313131 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeletonImage {
+  width: 51px;
+  height: 51px;
+  border-radius: 4px;
+}
+
+.skeletonTitle {
+  width: 250px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeletonAuthor {
+  width: 200px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeletonAlbum {
+  width: 180px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeletonTime {
+  width: 30px;
+  height: 16px;
+  border-radius: 4px;
+  justify-self: end;
+}

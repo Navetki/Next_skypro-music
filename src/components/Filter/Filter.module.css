@@ -3,6 +3,7 @@
   flex-direction: row;
   align-items: center;
   margin-bottom: 51px;
+  gap: 20px;
 }
 
 .filterTitle {
@@ -30,6 +31,7 @@
   color: white;
   cursor: pointer;
   position: relative;
+  box-sizing: border-box;
 }
 
 .filter__button:not(:last-child) {
