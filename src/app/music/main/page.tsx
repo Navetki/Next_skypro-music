@@ -4,9 +4,7 @@ import Centerblock from '@/components/Centerblock/Centerblock';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import styles from '@/app/music/main/page.module.css';
 import dynamic from 'next/dynamic';
-
 import Nav from '@/components/Nav/Nav';
-import Bar from '@/components/Bar/Bar';
 import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
 import { RootState } from '@/store/store';
 import { useMemo, useEffect } from 'react';
@@ -52,7 +50,6 @@ export default function MainPage() {
           />
           <Sidebar />
         </main>
-        <Bar />
         <footer className="footer"></footer>
       </div>
     </div>
