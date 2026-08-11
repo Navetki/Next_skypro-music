@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Nav.module.css';
@@ -73,11 +73,7 @@ export default function Nav() {
             </li>
             <li className={styles.menuItem}>
               {isAuth ? (
-                <span
-                  onClick={logout}
-                  className={styles.menuLink}
-                  style={{ cursor: 'pointer' }}
-                >
+                <span onClick={logout} className={styles.menuLink}>
                   Выйти
                 </span>
               ) : (

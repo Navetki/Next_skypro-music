@@ -116,15 +116,7 @@ export default function SignUp() {
             />
 
             {errorMessage && (
-              <div
-                className={styles.errorContainer}
-                style={{
-                  color: '#ff4d4d',
-                  padding: '10px 0',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
+              <div className={styles.errorContainer}>
                 <span>{errorMessage}</span>
               </div>
             )}

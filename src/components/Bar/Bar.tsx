@@ -134,19 +134,11 @@ export default function Bar() {
 
   return (
     <div
-      className={styles.bar}
-      style={{ display: currentTrack ? 'block' : 'none' }}
+      className={classnames(styles.bar, {
+        [styles.hidden]: !currentTrack,
+      })}
     >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          padding: '0 20px',
-          color: '#B1B1B1',
-          fontSize: '14px',
-          marginBottom: '5px',
-        }}
-      >
+      <div className={styles.timeCounter}>
         <span>{formatTime(currentTime)}</span> /{' '}
         <span>{formatTime(duration)}</span>
       </div>
@@ -154,7 +146,7 @@ export default function Bar() {
       <audio
         ref={audioRef}
         src={currentTrack?.track_file || undefined}
-        style={{ display: 'none' }}
+        className={styles.audioElement}
         onCanPlay={handleCanPlay}
         onEnded={isLoop ? undefined : onNextTrack}
         loop={isLoop}
@@ -171,7 +163,6 @@ export default function Bar() {
       />
 
       <div className={styles.barContent}>
-        <div className={styles.barPlayerProgress}></div>
         <div className={styles.barPlayerBlock}>
           <div className={styles.barPlayer}>
             <div className={styles.playerControls}>
@@ -251,24 +242,11 @@ export default function Bar() {
               <div className={styles.trackPlayLikeDis}>
                 <div
                   onClick={toggleLike}
-                  className={classnames(styles.trackPlayLike, styles.btnIcon)}
-                  style={{
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginLeft: '10px',
-                  }}
+                  className={classnames(styles.trackPlayLike, styles.btnIcon, {
+                    [styles.trackPlayLike_active]: isLike,
+                  })}
                 >
-                  <svg
-                    className={styles.trackPlayLikeSvg}
-                    style={{
-                      width: '14px',
-                      height: '12px',
-                      fill: isLike ? '#b672ff' : 'transparent',
-                      stroke: isLike ? '#b672ff' : '#b1b1b1',
-                      transition: 'all 0.2s ease',
-                    }}
-                  >
+                  <svg className={styles.trackPlayLikeSvg}>
                     <use
                       xlinkHref={
                         isLike

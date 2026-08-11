@@ -9,7 +9,7 @@ interface PlaylistProps {
 export default function Playlist({ initialTracks }: PlaylistProps) {
   if (!initialTracks || initialTracks.length === 0) {
     return (
-      <div style={{ color: '#b1b1b1', marginTop: '20px' }}>
+      <div className={styles.emptyMessage}>
         В этом списке пока нет треков...
       </div>
     );
