@@ -4,15 +4,12 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import styles from '@/app/music/main/page.module.css';
 import dynamic from 'next/dynamic';
-
 import { getSelectionTracks } from '@/services/tracks/tracksApi';
 import { TrackType } from '@/SharedTypes/ShareTypes';
 import { useAppSelector } from '@/store/store';
 import { data as mockTracks } from '@/data';
-
 import Nav from '@/components/Nav/Nav';
 import Centerblock from '@/components/Centerblock/Centerblock';
-import Bar from '@/components/Bar/Bar';
 import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
 
 const Sidebar = dynamic(() => import('@/components/Sidebar/Sidebar'), {
@@ -127,7 +124,6 @@ export default function CategoryPage() {
           />
           <Sidebar />
         </main>
-        <Bar />
         <footer className={styles.footer}></footer>
       </div>
     </div>

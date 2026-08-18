@@ -2,6 +2,18 @@
   width: auto;
   flex-grow: 1;
   padding: 20px 40px 20px 111px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+.centerblockContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.centerblockContent::-webkit-scrollbar {
+  width: 6px;
 }
 
 .centerblockSearch {

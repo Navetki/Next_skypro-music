@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import styles from '@/app/music/main/page.module.css';
 import dynamic from 'next/dynamic';
-
 import Nav from '@/components/Nav/Nav';
 import Centerblock from '@/components/Centerblock/Centerblock';
-import Bar from '@/components/Bar/Bar';
 import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
 import { RootState } from '@/store/store';
 import { setPagePlayList, resetFilters } from '@/store/features/trackSlice';
@@ -75,7 +73,6 @@ export default function FavoritesPage() {
           />
           <Sidebar />
         </main>
-        <Bar />
         <footer className="footer"></footer>
       </div>
     </div>
